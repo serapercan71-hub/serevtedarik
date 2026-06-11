@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Home from './pages/Home.jsx';
 import Products from './pages/Products.jsx';
+import Favorites from './pages/Favorites.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
 import Checkout from './pages/Checkout.jsx';
 import Login from './pages/Login.jsx';
@@ -24,6 +25,7 @@ function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Home />} />
           <Route path="/urunler" element={<Products />} />
+          <Route path="/favorilerim" element={<Favorites />} />
           <Route path="/urun/:id" element={<ProductDetail />} />
           <Route path="/giris" element={<Login />} />
           <Route path="/kayit" element={<Register />} />

@@ -146,31 +146,108 @@ header.site-header.sticky .logo-img {
 
 .header-icons {
   display: flex;
-  gap: 20px;
-  font-size: 22px;
+  gap: 14px;
   color: var(--navy);
-  cursor: pointer;
   align-items: center;
 }
 .header-icons svg {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
+  display: block;
   transition: var(--fast-trans);
 }
 .header-icons .icon-btn {
+  position: relative;
   transition: var(--fast-trans);
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   background: none;
   border: none;
   cursor: pointer;
-  color: inherit;
-  font-size: inherit;
+  color: var(--navy);
 }
 .header-icons .icon-btn:hover {
   color: var(--teal);
+  background: var(--beige);
+}
+/* Sayaç rozeti (favori + sepet) */
+.icon-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--gradient-teal);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(86, 124, 141, 0.35);
+}
+/* "Üye Ol" CTA */
+.join-btn {
+  background: var(--gradient-teal);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 50px;
+  white-space: nowrap;
+  transition: var(--fast-trans);
+  box-shadow: 0 4px 12px rgba(86, 124, 141, 0.25);
+}
+.join-btn:hover {
+  background: var(--gradient-navy);
+  transform: translateY(-1px);
+}
+/* Yönetici ikonu — sade/soluk */
+.admin-icon {
+  color: #aab4bd;
+}
+.admin-icon:hover {
+  color: var(--navy);
+}
+.admin-icon.active {
+  color: var(--teal);
+}
+
+/* Ürün kartı favori (kalp) butonu */
+.fav-btn {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(86, 124, 141, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--fast-trans);
+  box-shadow: var(--shadow-sm);
+}
+.fav-btn:hover {
+  color: #e74c3c;
   transform: scale(1.1);
+}
+.fav-btn.active {
+  color: #e74c3c;
+  border-color: #f5c6c2;
+}
+.no-results .no-results-icon {
+  color: var(--sky-blue);
+  display: inline-flex;
 }
 
 .main-nav {

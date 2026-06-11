@@ -3,16 +3,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Stars from './Stars.jsx';
 import Price from './Price.jsx';
+import { IconHeart } from './icons.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useFavorites } from '../context/FavoritesContext.jsx';
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
   const { user, isApproved, getProductPrice } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
   const [added, setAdded] = useState(false);
 
   const isMember = user?.role === 'member';
+  const fav = isFavorite(product.id);
 
   const handleAdd = () => {
     // Onaysız: girişli üye onay bekliyor (hesabıma), misafir girişe gider
@@ -43,6 +47,13 @@ export default function ProductCard({ product }) {
       whileHover={{ scale: 1.02 }}
     >
       {product.badge && <span className={badgeClass}>{product.badge}</span>}
+      <button
+        className={`fav-btn${fav ? ' active' : ''}`}
+        title={fav ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+        onClick={() => toggleFavorite(product.id)}
+      >
+        <IconHeart filled={fav} width={18} height={18} />
+      </button>
       <Link to={`/urun/${product.id}`} className="product-link">
         <img src={product.img} alt={product.title} className="product-img" />
         <h3 className="product-title">{product.title}</h3>
