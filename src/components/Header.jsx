@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -23,8 +23,16 @@ export default function Header() {
   const { count: favCount } = useFavorites();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const pending = isMember && user.status === 'pending';
+
+  // Aktif kategori: /urunler sayfasındaki ?kategori= parametresine göre.
+  // (Üç link de aynı sayfaya gittiği için NavLink hepsini aktif sayıyordu.)
+  const activeCat = new URLSearchParams(location.search).get('kategori');
+  const onProducts = location.pathname === '/urunler';
+  const catClass = (cat) =>
+    onProducts && activeCat === cat ? 'active' : undefined;
 
   useEffect(() => {
     const onScroll = () => setSticky(window.scrollY > 30);
@@ -145,11 +153,24 @@ export default function Header() {
         <NavLink to="/" end>
           Ana Sayfa
         </NavLink>
-        <NavLink to="/urunler">Tüm Ürünler</NavLink>
-        <NavLink to="/urunler?kategori=Ev%20%26%20Ya%C5%9Fam">Ev & Yaşam</NavLink>
-        <NavLink to="/urunler?kategori=Mutfak%20Gere%C3%A7leri">
+        <Link
+          to="/urunler"
+          className={onProducts && !activeCat ? 'active' : undefined}
+        >
+          Tüm Ürünler
+        </Link>
+        <Link
+          to="/urunler?kategori=Ev%20%26%20Ya%C5%9Fam"
+          className={catClass('Ev & Yaşam')}
+        >
+          Ev & Yaşam
+        </Link>
+        <Link
+          to="/urunler?kategori=Mutfak%20Gere%C3%A7leri"
+          className={catClass('Mutfak Gereçleri')}
+        >
           Mutfak Gereçleri
-        </NavLink>
+        </Link>
       </nav>
 
       {/* MOBİL MENÜ */}
