@@ -4,50 +4,152 @@ import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import Stars from '../components/Stars.jsx';
+import {
+  IconBadgeCheck,
+  IconTag,
+  IconChat,
+  IconTruck,
+} from '../components/icons.jsx';
 import { products, categories } from '../data/products.js';
 
 const fadeUp = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
   transition: { duration: 0.5, ease: 'easeOut' },
 };
+
+// Hero kolajındaki yüzen ürün görselleri
+const heroImages = [
+  { src: '/img/urun-mutfak-seti.jpg', cls: 'hc-1', delay: 0 },
+  { src: '/img/urun-3.jpg', cls: 'hc-2', delay: 0.8 },
+  { src: '/img/urun-2.jpg', cls: 'hc-3', delay: 1.6 },
+];
+
+// Örnek müşteri yorumları — gerçek yorumlar gelince değiştirilecek
+const testimonials = [
+  {
+    name: 'Elif K.',
+    place: 'Kadıköy / İstanbul',
+    rating: 5,
+    text: 'Sipariş verdim, aynı gün WhatsApp üzerinden dönüş yaptılar. Ürünler orijinal ve paketleme çok özenliydi.',
+  },
+  {
+    name: 'Murat A.',
+    place: 'Çankaya / Ankara',
+    rating: 5,
+    text: 'Mağazam için toptan alıyorum. Temsilci fiyatları gerçekten avantajlı, tedarik hızı da çok iyi.',
+  },
+  {
+    name: 'Zeynep T.',
+    place: 'Bornova / İzmir',
+    rating: 4.5,
+    text: 'Solingen setini aldım, kalitesi beklediğimin üstünde çıktı. İletişimleri çok hızlı, tavsiye ederim.',
+  },
+];
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
     >
       <Header />
 
-      {/* HERO */}
+      {/* HERO — sol metin, sağ yüzen ürün kolajı */}
       <section className="hero">
-        <motion.div
-          className="hero-content"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-        >
-          <h2>
-            Kalitenin <span className="accent">Yeni Adresi</span>
-          </h2>
-          <p>
-            Evinize şıklık katacak, kullanımı kolay ve uzun ömürlü özel tasarım
-            koleksiyonlarımızı hemen keşfedin.
-          </p>
-          <a href="#products" className="hero-btn">
-            Alışverişe Başla
-          </a>
-        </motion.div>
+        <div className="container hero-inner">
+          <motion.div
+            className="hero-content"
+            initial={{ opacity: 0, x: -24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
+            <span className="hero-eyebrow">Toptan & Perakende Tedarik</span>
+            <h2>
+              Kalitenin <span className="accent">Yeni Adresi</span>
+            </h2>
+            <p>
+              Evinize şıklık katacak, kullanımı kolay ve uzun ömürlü özel
+              tasarım koleksiyonlarımızı hemen keşfedin.
+            </p>
+            <div className="hero-actions">
+              <button className="hero-btn" onClick={() => navigate('/urunler')}>
+                Alışverişe Başla
+              </button>
+              <button
+                className="hero-btn-ghost"
+                onClick={() => navigate('/kayit')}
+              >
+                Üye Ol, Fiyatları Gör
+              </button>
+            </div>
+          </motion.div>
+
+          <div className="hero-collage" aria-hidden="true">
+            {heroImages.map((im) => (
+              <motion.img
+                key={im.cls}
+                src={im.src}
+                alt=""
+                className={`hero-card ${im.cls}`}
+                initial={{ opacity: 0, y: 30, rotate: 0 }}
+                animate={{ opacity: 1, y: [0, -10, 0] }}
+                transition={{
+                  opacity: { duration: 0.6, delay: im.delay * 0.3 },
+                  y: {
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: im.delay,
+                  },
+                }}
+              />
+            ))}
+            <div className="hero-blob" />
+          </div>
+        </div>
       </section>
 
+      {/* GÜVEN ŞERİDİ — ikonlu */}
+      <motion.section className="container trust-strip" {...fadeUp}>
+        <div className="trust-item">
+          <IconBadgeCheck />
+          <div>
+            <strong>%100 Orijinal Ürün</strong>
+            <span>Tüm ürünler garantili</span>
+          </div>
+        </div>
+        <div className="trust-item">
+          <IconTag />
+          <div>
+            <strong>Üyeye Özel Fiyat</strong>
+            <span>Perakendeci & temsilci fiyatları</span>
+          </div>
+        </div>
+        <div className="trust-item">
+          <IconChat />
+          <div>
+            <strong>WhatsApp ile Sipariş</strong>
+            <span>Hızlı ve kolay talep</span>
+          </div>
+        </div>
+        <div className="trust-item">
+          <IconTruck />
+          <div>
+            <strong>Hızlı Tedarik</strong>
+            <span>Özenli paketleme & gönderim</span>
+          </div>
+        </div>
+      </motion.section>
+
       <div className="container">
-        {/* KATEGORİLER */}
+        {/* KATEGORİLER — görselli */}
         <motion.h2 className="section-title" {...fadeUp}>
           Ayrıcalıklı Kategoriler
         </motion.h2>
@@ -55,15 +157,18 @@ export default function Home() {
           {categories.map((cat) => (
             <motion.div
               key={cat.name}
-              className="category-card"
+              className="category-card cat-visual"
               {...fadeUp}
               whileHover={{ y: -8 }}
               onClick={() =>
                 navigate(`/urunler?kategori=${encodeURIComponent(cat.name)}`)
               }
             >
-              <div className="cat-icon">{cat.icon}</div>
+              <div className="cat-img-wrap">
+                <img src={cat.img} alt={cat.name} loading="lazy" />
+              </div>
               <h3>{cat.name}</h3>
+              <span className="cat-link">Keşfet →</span>
             </motion.div>
           ))}
         </div>
@@ -82,6 +187,26 @@ export default function Home() {
             Tüm Ürünleri Gör
           </button>
         </div>
+
+        {/* MÜŞTERİ YORUMLARI */}
+        <motion.h2 className="section-title" {...fadeUp}>
+          Müşterilerimiz Ne Diyor?
+        </motion.h2>
+        <div className="testimonials">
+          {testimonials.map((t) => (
+            <motion.div className="testimonial-card" key={t.name} {...fadeUp}>
+              <Stars value={t.rating} />
+              <p className="testimonial-text">“{t.text}”</p>
+              <div className="testimonial-author">
+                <span className="t-avatar">{t.name.charAt(0)}</span>
+                <div>
+                  <strong>{t.name}</strong>
+                  <span>{t.place}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* HAKKIMIZDA */}
@@ -92,23 +217,6 @@ export default function Home() {
           en seçkin markaları bir araya getiriyoruz. İhtiyacınız olan ürünlere en
           hızlı, en güvenli ve en uygun fiyatlarla ulaşmanızı sağlamaktayız.
         </p>
-        <div className="trust-badges">
-          <div className="trust-badge-card">
-            <span className="trust-icon">💎</span>
-            <h3>%100 Orijinal Ürün</h3>
-            <p>Tüm ürünlerimiz garantilidir.</p>
-          </div>
-          <div className="trust-badge-card">
-            <span className="trust-icon">🏷️</span>
-            <h3>Üyeye Özel Fiyat</h3>
-            <p>Perakendeci ve temsilciye özel fiyatlar.</p>
-          </div>
-          <div className="trust-badge-card">
-            <span className="trust-icon">💬</span>
-            <h3>Kolay Sipariş</h3>
-            <p>WhatsApp ile hızlı sipariş.</p>
-          </div>
-        </div>
       </motion.section>
 
       <Footer />

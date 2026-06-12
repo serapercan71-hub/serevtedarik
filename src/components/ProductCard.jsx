@@ -55,7 +55,15 @@ export default function ProductCard({ product }) {
         <IconHeart filled={fav} width={18} height={18} />
       </button>
       <Link to={`/urun/${product.id}`} className="product-link">
-        <img src={product.img} alt={product.title} className="product-img" />
+        <div className="product-img-wrap">
+          <img
+            src={product.img}
+            alt={product.title}
+            className="product-img"
+            loading="lazy"
+          />
+          <span className="quick-view">İncele</span>
+        </div>
         <h3 className="product-title">{product.title}</h3>
       </Link>
       {product.rating && (

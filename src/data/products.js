@@ -115,10 +115,10 @@ export const products = [
 ];
 
 export const categories = [
-  { icon: '🍽️', name: 'Mutfak Gereçleri' },
-  { icon: '📦', name: 'Saklama Kapları' },
-  { icon: '🧴', name: 'Suluk & Matara' },
-  { icon: '🧵', name: 'Tekstil Ürünleri' },
+  { icon: '🍽️', name: 'Mutfak Gereçleri', img: '/img/urun-mutfak-seti.jpg' },
+  { icon: '📦', name: 'Saklama Kapları', img: '/img/urun-2.jpg' },
+  { icon: '🧴', name: 'Suluk & Matara', img: '/img/urun-3.jpg' },
+  { icon: '🧵', name: 'Tekstil Ürünleri', img: '/img/urun-raf.jpg' },
 ];
 
 export function getProductById(id) {

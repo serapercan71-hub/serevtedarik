@@ -58,7 +58,7 @@ export default function ProductDetail() {
         </nav>
 
         <div className="detail-wrapper">
-          {/* Görsel */}
+          {/* Görsel galerisi + zoom */}
           <motion.div
             className="detail-gallery"
             initial={{ opacity: 0, x: -20 }}
@@ -74,7 +74,7 @@ export default function ProductDetail() {
                 {product.badge}
               </span>
             )}
-            <img src={product.img} alt={product.title} className="detail-img" />
+            <Gallery product={product} />
           </motion.div>
 
           {/* Bilgi */}
@@ -185,5 +185,60 @@ export default function ProductDetail() {
       <Footer />
       <WhatsAppFloat />
     </motion.div>
+  );
+}
+
+// Görsel galerisi: küçük önizlemeler + imleci takip eden zoom.
+// Ürüne `images: ['/img/a.jpg', ...]` eklenirse hepsi listelenir; yoksa tek görsel.
+function Gallery({ product }) {
+  const images =
+    product.images && product.images.length > 0 ? product.images : [product.img];
+  const [active, setActive] = useState(0);
+  const [zoom, setZoom] = useState({ on: false, x: 50, y: 50 });
+
+  const handleMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoom({ on: true, x, y });
+  };
+
+  return (
+    <div className="gallery">
+      <div
+        className={`gallery-main${zoom.on ? ' zooming' : ''}`}
+        onMouseMove={handleMove}
+        onMouseLeave={() => setZoom((z) => ({ ...z, on: false }))}
+      >
+        <img
+          src={images[active]}
+          alt={product.title}
+          className="detail-img"
+          style={
+            zoom.on
+              ? {
+                  transformOrigin: `${zoom.x}% ${zoom.y}%`,
+                  transform: 'scale(1.9)',
+                }
+              : undefined
+          }
+        />
+        <span className="zoom-hint">🔍 Yakınlaştırmak için üzerine gel</span>
+      </div>
+
+      {images.length > 1 && (
+        <div className="gallery-thumbs">
+          {images.map((src, i) => (
+            <button
+              key={src + i}
+              className={`gallery-thumb${i === active ? ' active' : ''}`}
+              onClick={() => setActive(i)}
+            >
+              <img src={src} alt={`${product.title} ${i + 1}`} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

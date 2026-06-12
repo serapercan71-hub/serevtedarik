@@ -64,3 +64,65 @@ export function IconSearch(props) {
     </svg>
   );
 }
+
+export function IconMenu(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h11" />
+    </svg>
+  );
+}
+
+export function IconClose(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
+
+export function IconTruck(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M1.5 5.5h12.5v11H1.5z" />
+      <path d="M14 9h4.2l3 3.4v4.1H14" />
+      <circle cx="6" cy="18.6" r="1.9" />
+      <circle cx="17.6" cy="18.6" r="1.9" />
+    </svg>
+  );
+}
+
+export function IconBadgeCheck(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 2.5l2.4 1.8 3-.3 1.1 2.8 2.7 1.4-.7 2.9.7 2.9-2.7 1.4-1.1 2.8-3-.3-2.4 1.8-2.4-1.8-3 .3-1.1-2.8-2.7-1.4.7-2.9-.7-2.9 2.7-1.4 1.1-2.8 3 .3z" />
+      <path d="M8.8 12l2.2 2.2 4.2-4.4" />
+    </svg>
+  );
+}
+
+export function IconTag(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 12.5V4a1 1 0 0 1 1-1h8.5a2 2 0 0 1 1.4.6l7 7a2 2 0 0 1 0 2.8l-6.5 6.5a2 2 0 0 1-2.8 0l-7-7A2 2 0 0 1 3 12.5z" />
+      <circle cx="8.3" cy="8.3" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function IconChat(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z" />
+      <path d="M8.5 10.5h7M8.5 13.5h4.5" />
+    </svg>
+  );
+}
+
+export function IconArrowRight(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 12h16M13 5l7 7-7 7" />
+    </svg>
+  );
+}

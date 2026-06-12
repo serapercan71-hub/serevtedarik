@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
@@ -9,10 +10,14 @@ import {
   IconUser,
   IconCart,
   IconShield,
+  IconMenu,
+  IconClose,
+  IconSearch,
 } from './icons.jsx';
 
 export default function Header() {
   const [sticky, setSticky] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { totalItems, openCart } = useCart();
   const { user, isAdmin, isMember } = useAuth();
   const { count: favCount } = useFavorites();
@@ -27,10 +32,24 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Mobil menü açıkken arka plan kaymasın
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
   const handleSearch = (e) => {
     e.preventDefault();
     const q = query.trim();
+    setMenuOpen(false);
     navigate(q ? `/urunler?q=${encodeURIComponent(q)}` : '/urunler');
+  };
+
+  const go = (to) => {
+    setMenuOpen(false);
+    navigate(to);
   };
 
   return (
@@ -41,6 +60,14 @@ export default function Header() {
 
       <header className={`site-header${sticky ? ' sticky' : ''}`}>
         <div className="container header-inner">
+          <button
+            className="icon-btn menu-toggle"
+            title="Menü"
+            onClick={() => setMenuOpen(true)}
+          >
+            <IconMenu />
+          </button>
+
           <Link to="/" className="logo">
             <img src="/img/logo.png" alt="Serap Ercan Logo" className="logo-img" />
           </Link>
@@ -61,12 +88,16 @@ export default function Header() {
               target="_blank"
               rel="noreferrer"
               title="Instagram"
-              className="icon-btn"
+              className="icon-btn hide-mobile"
             >
               <IconInstagram />
             </a>
 
-            <Link to="/favorilerim" className="icon-btn" title="Favorilerim">
+            <Link
+              to="/favorilerim"
+              className="icon-btn hide-mobile"
+              title="Favorilerim"
+            >
               <IconHeart />
               {favCount > 0 && <span className="icon-badge">{favCount}</span>}
             </Link>
@@ -79,10 +110,14 @@ export default function Header() {
             {/* Hesap durumu */}
             {!user && (
               <>
-                <Link to="/giris" className="icon-btn" title="Üye Girişi">
+                <Link
+                  to="/giris"
+                  className="icon-btn hide-mobile"
+                  title="Üye Girişi"
+                >
                   <IconUser />
                 </Link>
-                <Link to="/kayit" className="join-btn">
+                <Link to="/kayit" className="join-btn hide-mobile">
                   Üye Ol
                 </Link>
               </>
@@ -94,10 +129,10 @@ export default function Header() {
               </Link>
             )}
 
-            {/* Yönetici paneli girişi (her durumda erişilebilir, sade) */}
+            {/* Yönetici paneli girişi */}
             <Link
               to="/admin"
-              className={`icon-btn admin-icon${isAdmin ? ' active' : ''}`}
+              className={`icon-btn admin-icon hide-mobile${isAdmin ? ' active' : ''}`}
               title="Yönetici Paneli"
             >
               <IconShield />
@@ -116,6 +151,82 @@ export default function Header() {
           Mutfak Gereçleri
         </NavLink>
       </nav>
+
+      {/* MOBİL MENÜ */}
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.div
+              className="mobile-overlay"
+              onClick={() => setMenuOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+            <motion.aside
+              className="mobile-drawer"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            >
+              <div className="mobile-drawer-head">
+                <img src="/img/logo.png" alt="Serap Ercan" className="logo-img" />
+                <button
+                  className="icon-btn"
+                  onClick={() => setMenuOpen(false)}
+                  title="Kapat"
+                >
+                  <IconClose />
+                </button>
+              </div>
+
+              <form className="mobile-search" onSubmit={handleSearch}>
+                <IconSearch width={18} height={18} />
+                <input
+                  type="text"
+                  placeholder="Ürün ara..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </form>
+
+              <nav className="mobile-nav">
+                <button onClick={() => go('/')}>Ana Sayfa</button>
+                <button onClick={() => go('/urunler')}>Tüm Ürünler</button>
+                <button onClick={() => go('/urunler?kategori=Mutfak%20Gere%C3%A7leri')}>
+                  Mutfak Gereçleri
+                </button>
+                <button onClick={() => go('/favorilerim')}>
+                  Favorilerim {favCount > 0 ? `(${favCount})` : ''}
+                </button>
+              </nav>
+
+              <div className="mobile-auth">
+                {!user && (
+                  <>
+                    <button className="checkout-btn" onClick={() => go('/giris')}>
+                      Üye Girişi
+                    </button>
+                    <button className="mobile-join" onClick={() => go('/kayit')}>
+                      Üye Ol — fiyatları gör
+                    </button>
+                  </>
+                )}
+                {isMember && (
+                  <button className="checkout-btn" onClick={() => go('/hesabim')}>
+                    Hesabım
+                  </button>
+                )}
+                <button className="mobile-admin" onClick={() => go('/admin')}>
+                  <IconShield width={16} height={16} /> Yönetici Paneli
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }
