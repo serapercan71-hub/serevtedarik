@@ -112,6 +112,13 @@ export default function Checkout() {
         })),
         total: totalAmount,
         status: 'Onay bekliyor',
+        customerName: `${form.firstName} ${form.lastName}`,
+        phone: form.phone,
+        email: form.email,
+        address: `${form.address}, ${form.district} / ${
+          cityNames[form.city] || form.city
+        }`,
+        note: form.note,
         createdAt: new Date().toISOString(),
       });
     }

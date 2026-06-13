@@ -5,9 +5,18 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useCatalog } from '../context/CatalogContext.jsx';
 import { useSettings } from '../context/SettingsContext.jsx';
 import { useCart, formatPrice } from '../context/CartContext.jsx';
-import { fileToWebp } from '../lib/image.js';
+import { TIERS } from '../data/store.js';
 import Thumb from '../components/Thumb.jsx';
+import { fileToWebp } from '../lib/image.js';
 import AdminLogin from './AdminLogin.jsx';
+
+const TABS = [
+  { key: 'panel', label: 'Panel' },
+  { key: 'urunler', label: 'Ürünler' },
+  { key: 'siparisler', label: 'Siparişler' },
+  { key: 'uyeler', label: 'Üyeler' },
+  { key: 'ayarlar', label: 'Ayarlar' },
+];
 
 const ORDER_STATUSES = [
   'Onay bekliyor',
@@ -17,19 +26,17 @@ const ORDER_STATUSES = [
   'İptal',
 ];
 
-const waLink = (phone) => {
-  let d = String(phone || '').replace(/\D/g, '');
-  if (d.startsWith('0')) d = '90' + d.slice(1);
-  else if (!d.startsWith('90') && d.length === 10) d = '90' + d;
-  return `https://wa.me/${d}`;
-};
+function waLink(phone, text = '') {
+  let p = (phone || '').replace(/\D/g, '');
+  if (p.startsWith('0')) p = '90' + p.slice(1);
+  else if (!p.startsWith('90')) p = '90' + p;
+  return `https://wa.me/${p}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+}
 
 export default function Admin() {
-  const auth = useAuth();
-  const { isAdmin, logout } = auth;
-  const { showToast } = useCart();
+  const { isAdmin, logout } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState('dashboard');
+  const [tab, setTab] = useState('panel');
 
   if (!isAdmin) return <AdminLogin />;
 
@@ -37,14 +44,6 @@ export default function Admin() {
     logout();
     navigate('/');
   };
-
-  const tabs = [
-    { key: 'dashboard', label: 'Panel' },
-    { key: 'urunler', label: 'Ürünler' },
-    { key: 'siparisler', label: 'Siparişler' },
-    { key: 'uyeler', label: 'Üyeler' },
-    { key: 'ayarlar', label: 'Ayarlar' },
-  ];
 
   return (
     <motion.div
@@ -55,7 +54,7 @@ export default function Admin() {
       <header className="checkout-header">
         <div className="container header-inner">
           <Link to="/" className="logo">
-            <img src="/img/logo.png" alt="Logo" className="logo-img" />
+            <img src="/img/logo.png" alt="Serap Ercan Logo" className="logo-img" />
           </Link>
           <span className="admin-badge">Yönetici Paneli</span>
           <button className="logout-btn admin-logout" onClick={handleLogout}>
@@ -64,55 +63,51 @@ export default function Admin() {
         </div>
       </header>
 
-      <div className="admin-tabs-bar">
-        <div className="container admin-tabs">
-          {tabs.map((t) => (
+      <div className="container admin-page">
+        <nav className="admin-tabs">
+          {TABS.map((t) => (
             <button
               key={t.key}
               className={`admin-tab${tab === t.key ? ' active' : ''}`}
               onClick={() => setTab(t.key)}
             >
               {t.label}
-              {t.key === 'uyeler' && auth.users.some((u) => u.status === 'pending') && (
-                <span className="tab-dot" />
-              )}
             </button>
           ))}
-        </div>
-      </div>
+        </nav>
 
-      <div className="container admin-page">
-        {tab === 'dashboard' && <Dashboard auth={auth} setTab={setTab} />}
-        {tab === 'urunler' && <ProductsTab showToast={showToast} />}
-        {tab === 'siparisler' && <OrdersTab auth={auth} showToast={showToast} />}
-        {tab === 'uyeler' && <MembersTab auth={auth} showToast={showToast} />}
-        {tab === 'ayarlar' && <SettingsTab showToast={showToast} />}
+        {tab === 'panel' && <Dashboard onGo={setTab} />}
+        {tab === 'urunler' && <ProductsAdmin />}
+        {tab === 'siparisler' && <OrdersAdmin />}
+        {tab === 'uyeler' && <MembersAdmin />}
+        {tab === 'ayarlar' && <SettingsAdmin />}
       </div>
     </motion.div>
   );
 }
 
-/* ---------------- DASHBOARD ---------------- */
-function Dashboard({ auth, setTab }) {
-  const { users, orders } = auth;
+/* ============================ PANEL ============================ */
+function Dashboard({ onGo }) {
+  const { users, orders } = useAuth();
   const { products } = useCatalog();
   const pending = users.filter((u) => u.status === 'pending').length;
-  const approved = users.filter((u) => u.status === 'approved').length;
+  const members = users.length;
+
   const cards = [
     { label: 'Bekleyen Başvuru', value: pending, tab: 'uyeler', accent: pending > 0 },
-    { label: 'Onaylı Üye', value: approved, tab: 'uyeler' },
-    { label: 'Toplam Sipariş', value: orders.length, tab: 'siparisler' },
-    { label: 'Toplam Ürün', value: products.length, tab: 'urunler' },
+    { label: 'Toplam Üye', value: members, tab: 'uyeler' },
+    { label: 'Sipariş', value: orders.length, tab: 'siparisler' },
+    { label: 'Ürün', value: products.length, tab: 'urunler' },
   ];
+
   return (
-    <section className="admin-section">
-      <h2 className="admin-h2">Genel Bakış</h2>
+    <div>
       <div className="dash-cards">
         {cards.map((c) => (
           <button
             key={c.label}
             className={`dash-card${c.accent ? ' accent' : ''}`}
-            onClick={() => setTab(c.tab)}
+            onClick={() => onGo(c.tab)}
           >
             <span className="dash-value">{c.value}</span>
             <span className="dash-label">{c.label}</span>
@@ -120,340 +115,388 @@ function Dashboard({ auth, setTab }) {
         ))}
       </div>
 
-      <div className="dash-recent">
-        <div className="dash-col">
+      <div className="dash-grid">
+        <div className="account-card">
           <h3>Son Siparişler</h3>
           {orders.length === 0 ? (
             <p className="account-empty">Henüz sipariş yok.</p>
           ) : (
-            orders.slice(0, 5).map((o) => (
-              <div className="dash-row" key={o.code}>
-                <strong>{o.code}</strong>
-                <span>{formatPrice(o.total)}</span>
-              </div>
-            ))
+            <div className="order-list">
+              {orders.slice(0, 5).map((o) => (
+                <div className="order-row" key={o.code}>
+                  <div>
+                    <strong>{o.code}</strong>
+                    <span className="order-date">
+                      {new Date(o.createdAt).toLocaleDateString('tr-TR')}
+                    </span>
+                  </div>
+                  <div className="order-meta">
+                    <span className="order-status">{o.status}</span>
+                    <strong>{formatPrice(o.total)}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-        <div className="dash-col">
+
+        <div className="account-card">
           <h3>Son Başvurular</h3>
           {users.length === 0 ? (
             <p className="account-empty">Henüz başvuru yok.</p>
           ) : (
-            users.slice(-5).reverse().map((u) => (
-              <div className="dash-row" key={u.id}>
-                <strong>{u.companyName || u.fullName}</strong>
-                <span className={`mini-status ${u.status}`}>
-                  {statusLabel(u.status)}
-                </span>
-              </div>
-            ))
+            <div className="order-list">
+              {users.slice(-5).reverse().map((u) => (
+                <div className="order-row" key={u.id}>
+                  <div>
+                    <strong>{u.companyName || u.fullName}</strong>
+                    <span className="order-date">{u.email}</span>
+                  </div>
+                  <span className={`mini-status ${u.status}`}>
+                    {u.status === 'approved'
+                      ? 'Onaylı'
+                      : u.status === 'rejected'
+                      ? 'Red'
+                      : u.status === 'suspended'
+                      ? 'Askıda'
+                      : 'Beklemede'}
+                  </span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-/* ---------------- ÜRÜNLER ---------------- */
+/* ============================ ÜRÜNLER ============================ */
 const emptyProduct = {
   title: '',
-  category: '',
+  desc: '',
   img: '',
+  category: '',
+  badge: '',
   price: '',
   priceTemsilci: '',
-  badge: '',
   inStock: true,
-  desc: '',
 };
 
-function ProductsTab({ showToast }) {
-  const {
-    products,
-    categories,
-    addProduct,
-    updateProduct,
-    deleteProduct,
-    addCategory,
-    deleteCategory,
-  } = useCatalog();
-  const [editing, setEditing] = useState(null); // null | 'new' | product
-  const [form, setForm] = useState(emptyProduct);
-  const [newCat, setNewCat] = useState('');
+function ProductsAdmin() {
+  const { products, categories, addProduct, updateProduct, deleteProduct } =
+    useCatalog();
+  const { showToast } = useCart();
+  const [editing, setEditing] = useState(null); // ürün veya null
+  const [catModal, setCatModal] = useState(false);
+
+  return (
+    <div>
+      <div className="admin-toolbar">
+        <h2 className="admin-h2">
+          Ürünler <span className="count-pill">{products.length}</span>
+        </h2>
+        <div className="toolbar-actions">
+          <button className="btn-outline" onClick={() => setCatModal(true)}>
+            + Kategori Ekle
+          </button>
+          <button
+            className="btn-primary"
+            onClick={() => setEditing({ ...emptyProduct })}
+          >
+            + Ürün Ekle
+          </button>
+        </div>
+      </div>
+
+      {products.length === 0 ? (
+        <p className="account-empty">Henüz ürün yok. “Ürün Ekle” ile başla.</p>
+      ) : (
+        <div className="admin-product-list">
+          {products.map((p) => (
+            <div className="admin-product-row" key={p.id}>
+              <Thumb src={p.img} alt={p.title} className="apr-img" />
+              <div className="apr-info">
+                <strong>{p.title}</strong>
+                <span>{p.category || 'Kategorisiz'}</span>
+              </div>
+              <div className="apr-prices">
+                <span>Perakende: {formatPrice(Number(p.price) || 0)}</span>
+                <span>Temsilci: {formatPrice(Number(p.priceTemsilci) || 0)}</span>
+              </div>
+              <span className={`apr-stock${p.inStock ? '' : ' out'}`}>
+                {p.inStock ? 'Stokta' : 'Tükendi'}
+              </span>
+              <div className="apr-actions">
+                <button className="mini-btn" onClick={() => setEditing(p)}>
+                  Düzenle
+                </button>
+                <button
+                  className="reject-btn"
+                  onClick={() => {
+                    if (confirm(`"${p.title}" silinsin mi?`)) {
+                      deleteProduct(p.id);
+                      showToast('Ürün silindi');
+                    }
+                  }}
+                >
+                  Sil
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {editing && (
+        <ProductForm
+          initial={editing}
+          categories={categories}
+          onClose={() => setEditing(null)}
+          onSave={(data) => {
+            if (editing.id) {
+              updateProduct(editing.id, data);
+              showToast('Ürün güncellendi');
+            } else {
+              addProduct(data);
+              showToast('Ürün eklendi');
+            }
+            setEditing(null);
+          }}
+          onOpenCat={() => setCatModal(true)}
+        />
+      )}
+
+      {catModal && <CategoryModal onClose={() => setCatModal(false)} />}
+    </div>
+  );
+}
+
+function ProductForm({ initial, categories, onClose, onSave, onOpenCat }) {
+  const [form, setForm] = useState(initial);
+  const { showToast } = useCart();
   const [uploading, setUploading] = useState(false);
 
-  const openNew = () => {
-    setForm({ ...emptyProduct, category: categories[0] || '' });
-    setEditing('new');
-  };
-  const openEdit = (p) => {
-    setForm({
-      title: p.title,
-      category: p.category,
-      img: p.img,
-      price: p.price,
-      priceTemsilci: p.priceTemsilci,
-      badge: p.badge || '',
-      inStock: p.inStock !== false,
-      desc: p.desc || '',
-    });
-    setEditing(p);
-  };
-  const close = () => {
-    setEditing(null);
-    setNewCat('');
-  };
+  const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
-  const onImage = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const onFile = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
     setUploading(true);
     try {
-      const webp = await fileToWebp(file);
-      setForm((f) => ({ ...f, img: webp }));
+      const webp = await fileToWebp(f);
+      set('img', webp);
+      showToast('Resim WebP’ye çevrildi');
     } catch (err) {
-      showToast(err.message || 'Görsel yüklenemedi');
+      showToast(err.message || 'Resim yüklenemedi');
     } finally {
       setUploading(false);
     }
   };
 
-  const addNewCategory = () => {
-    const ok = addCategory(newCat);
-    if (ok) {
-      setForm((f) => ({ ...f, category: newCat.trim() }));
-      showToast(`"${newCat.trim()}" kategorisi eklendi`);
-      setNewCat('');
-    } else {
-      showToast('Kategori zaten var veya boş');
-    }
-  };
-
   const save = () => {
-    if (!form.title.trim()) return showToast('Ürün adı gerekli');
-    if (!form.category) return showToast('Kategori seçin');
-    if (editing === 'new') {
-      addProduct(form);
-      showToast('Ürün eklendi');
-    } else {
-      updateProduct(editing.id, form);
-      showToast('Ürün güncellendi');
-    }
-    close();
+    if (!form.title.trim()) return showToast('Ürün adı gir');
+    onSave(form);
   };
 
   return (
-    <section className="admin-section">
-      <div className="admin-section-head">
-        <h2 className="admin-h2">Ürünler ({products.length})</h2>
-        <button className="mini-btn" onClick={openNew}>
-          + Yeni Ürün
-        </button>
-      </div>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-head">
+          <h3>{initial.id ? 'Ürünü Düzenle' : 'Yeni Ürün'}</h3>
+          <button className="close-cart" onClick={onClose}>
+            ×
+          </button>
+        </div>
 
-      {/* Kategori yönetimi */}
-      <div className="cat-manager">
-        <span className="cat-manager-label">Kategoriler:</span>
-        {categories.map((c) => (
-          <span className="cat-chip" key={c}>
-            {c}
-            <button
-              title="Sil"
-              onClick={() => {
-                deleteCategory(c);
-                showToast(`"${c}" kaldırıldı`);
-              }}
-            >
-              ×
-            </button>
-          </span>
-        ))}
-      </div>
-
-      {/* Ürün listesi */}
-      <div className="admin-product-list">
-        {products.map((p) => (
-          <div className="admin-product-row" key={p.id}>
-            <Thumb src={p.img} alt={p.title} className="apr-thumb" />
-            <div className="apr-info">
-              <strong>{p.title}</strong>
-              <span>{p.category || '—'}</span>
-            </div>
-            <div className="apr-prices">
-              <span>Per: {formatPrice(p.price)}</span>
-              <span>Tem: {formatPrice(p.priceTemsilci)}</span>
-            </div>
-            <span className={`mini-status ${p.inStock ? 'approved' : 'rejected'}`}>
-              {p.inStock ? 'Stokta' : 'Tükendi'}
-            </span>
-            <div className="apr-actions">
-              <button className="mini-btn" onClick={() => openEdit(p)}>
-                Düzenle
-              </button>
-              <button
-                className="reject-btn small"
-                onClick={() => {
-                  if (confirm(`"${p.title}" silinsin mi?`)) {
-                    deleteProduct(p.id);
-                    showToast('Ürün silindi');
-                  }
-                }}
-              >
-                Sil
-              </button>
+        <div className="modal-body">
+          {/* Resim */}
+          <div className="img-upload">
+            <Thumb src={form.img} alt="Önizleme" className="img-upload-preview" />
+            <div>
+              <label className="btn-outline upload-label">
+                {uploading ? 'Çevriliyor…' : 'Resim Seç'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onFile}
+                  hidden
+                />
+              </label>
+              {form.img && (
+                <button className="text-btn" onClick={() => set('img', '')}>
+                  Kaldır
+                </button>
+              )}
+              <p className="hint-sm">Her format otomatik WebP’ye çevrilir.</p>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Ürün formu (modal) */}
-      {editing && (
-        <div className="admin-modal-overlay" onClick={close}>
-          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>{editing === 'new' ? 'Yeni Ürün' : 'Ürünü Düzenle'}</h3>
+          <div className="form-group">
+            <label>Ürün Adı</label>
+            <input value={form.title} onChange={(e) => set('title', e.target.value)} />
+          </div>
 
-            <div className="admin-form-grid">
-              <label className="af-full">
-                Ürün Adı
-                <input
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="Ürün adı"
-                />
-              </label>
+          <div className="form-group">
+            <label>Açıklama</label>
+            <textarea
+              rows={3}
+              value={form.desc}
+              onChange={(e) => set('desc', e.target.value)}
+            />
+          </div>
 
-              {/* Kategori + yeni kategori ekleme */}
-              <label className="af-full">
-                Kategori
-                <select
-                  value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
-                >
-                  <option value="">Kategori seçin</option>
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="af-full new-cat-row">
-                <input
-                  value={newCat}
-                  onChange={(e) => setNewCat(e.target.value)}
-                  placeholder="+ Yeni kategori adı"
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addNewCategory())}
-                />
-                <button type="button" className="mini-btn" onClick={addNewCategory}>
-                  Kategori Ekle
-                </button>
-              </div>
-
-              {/* Görsel yükleme (otomatik WebP) */}
-              <div className="af-full image-upload">
-                <Thumb src={form.img} alt="" className="upload-preview" />
-                <div>
-                  <label className="upload-btn">
-                    {uploading ? 'Dönüştürülüyor…' : 'Görsel Yükle'}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={onImage}
-                    />
-                  </label>
-                  <p className="upload-hint">
-                    Her format otomatik <strong>WebP</strong>'ye çevrilir.
-                  </p>
-                  {form.img && (
-                    <button
-                      type="button"
-                      className="link-btn"
-                      onClick={() => setForm({ ...form, img: '' })}
-                    >
-                      Görseli kaldır
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <label>
-                Perakendeci Fiyatı (₺)
-                <input
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
-                />
-              </label>
-              <label>
-                Temsilci Fiyatı (₺)
-                <input
-                  type="number"
-                  value={form.priceTemsilci}
-                  onChange={(e) =>
-                    setForm({ ...form, priceTemsilci: e.target.value })
-                  }
-                />
-              </label>
-
-              <label>
-                Rozet
-                <select
-                  value={form.badge}
-                  onChange={(e) => setForm({ ...form, badge: e.target.value })}
-                >
-                  <option value="">Yok</option>
-                  <option value="Yeni">Yeni</option>
-                  <option value="Çok Satan">Çok Satan</option>
-                  <option value="Popüler">Popüler</option>
-                </select>
-              </label>
-              <label className="af-check">
-                <input
-                  type="checkbox"
-                  checked={form.inStock}
-                  onChange={(e) => setForm({ ...form, inStock: e.target.checked })}
-                />
-                Stokta
-              </label>
-
-              <label className="af-full">
-                Açıklama
-                <textarea
-                  rows={3}
-                  value={form.desc}
-                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
-                  placeholder="Ürün açıklaması"
-                />
-              </label>
+          <div className="form-row">
+            <div className="form-group" style={{ flex: 2 }}>
+              <label>Kategori</label>
+              <select
+                value={form.category}
+                onChange={(e) => set('category', e.target.value)}
+              >
+                <option value="">Seçiniz</option>
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </div>
+            <button
+              className="btn-outline"
+              style={{ alignSelf: 'flex-end' }}
+              onClick={onOpenCat}
+              type="button"
+            >
+              + Yeni Kategori
+            </button>
+          </div>
 
-            <div className="admin-modal-actions">
-              <button className="logout-btn" onClick={close}>
-                Vazgeç
-              </button>
-              <button className="checkout-btn" onClick={save}>
-                Kaydet
-              </button>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Perakendeci Fiyatı (₺)</label>
+              <input
+                type="number"
+                value={form.price}
+                onChange={(e) => set('price', e.target.value)}
+              />
             </div>
+            <div className="form-group">
+              <label>Temsilci Fiyatı (₺)</label>
+              <input
+                type="number"
+                value={form.priceTemsilci}
+                onChange={(e) => set('priceTemsilci', e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Rozet (opsiyonel)</label>
+              <input
+                value={form.badge}
+                placeholder="Yeni, Çok Satan..."
+                onChange={(e) => set('badge', e.target.value)}
+              />
+            </div>
+            <label className="stock-toggle">
+              <input
+                type="checkbox"
+                checked={form.inStock}
+                onChange={(e) => set('inStock', e.target.checked)}
+              />
+              Stokta var
+            </label>
           </div>
         </div>
-      )}
-    </section>
+
+        <div className="modal-foot">
+          <button className="btn-outline" onClick={onClose}>
+            Vazgeç
+          </button>
+          <button className="btn-primary" onClick={save}>
+            Kaydet
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
-/* ---------------- SİPARİŞLER ---------------- */
-function OrdersTab({ auth, showToast }) {
-  const { orders, updateOrderStatus, deleteOrder } = auth;
+function CategoryModal({ onClose }) {
+  const { categories, addCategory, deleteCategory } = useCatalog();
+  const { showToast } = useCart();
+  const [name, setName] = useState('');
+
+  const add = () => {
+    if (!name.trim()) return;
+    const ok = addCategory(name);
+    showToast(ok ? 'Kategori eklendi' : 'Bu kategori zaten var');
+    setName('');
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-head">
+          <h3>Kategoriler</h3>
+          <button className="close-cart" onClick={onClose}>
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="cat-add-row">
+            <input
+              value={name}
+              placeholder="Yeni kategori adı"
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+            <button className="btn-primary" onClick={add}>
+              Ekle
+            </button>
+          </div>
+          <div className="cat-chips">
+            {categories.map((c) => (
+              <span className="cat-chip" key={c}>
+                {c}
+                <button
+                  onClick={() => {
+                    deleteCategory(c);
+                    showToast('Kategori silindi');
+                  }}
+                  title="Sil"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            {categories.length === 0 && (
+              <p className="account-empty">Henüz kategori yok.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================ SİPARİŞLER ============================ */
+function OrdersAdmin() {
+  const { orders, updateOrderStatus, deleteOrder } = useAuth();
+  const { showToast } = useCart();
   const [filter, setFilter] = useState('Tümü');
   const [open, setOpen] = useState(null);
 
-  const list = orders.filter((o) => filter === 'Tümü' || o.status === filter);
+  const list =
+    filter === 'Tümü' ? orders : orders.filter((o) => o.status === filter);
 
   return (
-    <section className="admin-section">
-      <div className="admin-section-head">
-        <h2 className="admin-h2">Siparişler ({orders.length})</h2>
+    <div>
+      <div className="admin-toolbar">
+        <h2 className="admin-h2">
+          Siparişler <span className="count-pill">{orders.length}</span>
+        </h2>
         <select
           className="filter-select"
           value={filter}
@@ -469,24 +512,25 @@ function OrdersTab({ auth, showToast }) {
       {list.length === 0 ? (
         <p className="account-empty">Sipariş yok.</p>
       ) : (
-        <div className="order-admin-list">
+        <div className="admin-order-list">
           {list.map((o) => (
-            <div className="order-admin-card" key={o.code}>
-              <div className="oac-head" onClick={() => setOpen(open === o.code ? null : o.code)}>
+            <div className="admin-order-card" key={o.code}>
+              <div className="aoc-head" onClick={() => setOpen(open === o.code ? null : o.code)}>
                 <div>
                   <strong>{o.code}</strong>
-                  <span className="oac-date">
+                  <span className="order-date">
                     {new Date(o.createdAt).toLocaleString('tr-TR')}
                   </span>
                 </div>
-                <div className="oac-right">
+                <div className="aoc-right">
                   <strong>{formatPrice(o.total)}</strong>
                   <select
+                    className={`status-select s-${o.status.replace(/\s/g, '')}`}
                     value={o.status}
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => {
                       updateOrderStatus(o.code, e.target.value);
-                      showToast('Sipariş durumu güncellendi');
+                      showToast('Durum güncellendi');
                     }}
                   >
                     {ORDER_STATUSES.map((s) => (
@@ -497,44 +541,42 @@ function OrdersTab({ auth, showToast }) {
               </div>
 
               {open === o.code && (
-                <div className="oac-detail">
-                  <div className="oac-items">
-                    {(o.items || []).map((it, i) => (
-                      <div key={i} className="oac-item">
+                <div className="aoc-detail">
+                  <div className="aoc-items">
+                    {o.items?.map((i, idx) => (
+                      <div key={idx} className="aoc-item">
                         <span>
-                          {it.title} × {it.qty}
+                          {i.title} × {i.qty}
                         </span>
-                        <span>{formatPrice(it.price * it.qty)}</span>
+                        <span>{formatPrice((Number(i.price) || 0) * i.qty)}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="oac-meta">
+                  <div className="aoc-customer">
                     <p>
-                      <strong>Müşteri:</strong> {o.customerName || '—'} ·{' '}
-                      {o.phone || '—'}
+                      <strong>{o.customerName || '—'}</strong>
                     </p>
-                    <p>
-                      <strong>Adres:</strong> {o.address || '—'}
-                    </p>
-                    {o.note && (
-                      <p>
-                        <strong>Not:</strong> {o.note}
-                      </p>
-                    )}
+                    <p>{o.phone}</p>
+                    <p>{o.email}</p>
+                    <p>{o.address}</p>
+                    {o.note && <p>Not: {o.note}</p>}
                   </div>
-                  <div className="oac-actions">
+                  <div className="aoc-buttons">
                     {o.phone && (
                       <a
-                        className="mini-btn wa"
-                        href={waLink(o.phone)}
+                        className="wa-resend-btn small"
+                        href={waLink(
+                          o.phone,
+                          `Merhaba, ${o.code} numaralı siparişiniz hakkında...`
+                        )}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        WhatsApp'tan Yaz
+                        🟢 WhatsApp’tan Yaz
                       </a>
                     )}
                     <button
-                      className="reject-btn small"
+                      className="reject-btn"
                       onClick={() => {
                         if (confirm('Sipariş silinsin mi?')) {
                           deleteOrder(o.code);
@@ -551,12 +593,12 @@ function OrdersTab({ auth, showToast }) {
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
-/* ---------------- ÜYELER ---------------- */
-function MembersTab({ auth, showToast }) {
+/* ============================ ÜYELER ============================ */
+function MembersAdmin() {
   const {
     users,
     approveUser,
@@ -566,264 +608,238 @@ function MembersTab({ auth, showToast }) {
     deleteUser,
     setUserNote,
     getUserOrders,
-  } = auth;
+  } = useAuth();
+  const { showToast } = useCart();
   const [filter, setFilter] = useState('all');
-  const [open, setOpen] = useState(null);
 
   const order = { pending: 0, approved: 1, suspended: 2, rejected: 3 };
   const list = [...users]
-    .filter((u) => filter === 'all' || u.status === filter)
-    .sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9));
-
-  const filters = [
-    { k: 'all', l: 'Tümü' },
-    { k: 'pending', l: 'Bekleyen' },
-    { k: 'approved', l: 'Onaylı' },
-    { k: 'rejected', l: 'Reddedilen' },
-    { k: 'suspended', l: 'Askıda' },
-  ];
+    .filter((u) => (filter === 'all' ? true : u.status === filter))
+    .sort(
+      (a, b) =>
+        (order[a.status] ?? 9) - (order[b.status] ?? 9) ||
+        new Date(b.createdAt) - new Date(a.createdAt)
+    );
 
   return (
-    <section className="admin-section">
-      <div className="admin-section-head">
-        <h2 className="admin-h2">Üyeler ({users.length})</h2>
-        <div className="filter-chips">
-          {filters.map((f) => (
-            <button
-              key={f.k}
-              className={`chip${filter === f.k ? ' active' : ''}`}
-              onClick={() => setFilter(f.k)}
-            >
-              {f.l}
-            </button>
-          ))}
-        </div>
+    <div>
+      <div className="admin-toolbar">
+        <h2 className="admin-h2">
+          Üyelik Başvuruları <span className="count-pill">{users.length}</span>
+        </h2>
+        <select
+          className="filter-select"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <option value="all">Tümü</option>
+          <option value="pending">Beklemede</option>
+          <option value="approved">Onaylı</option>
+          <option value="rejected">Reddedilmiş</option>
+          <option value="suspended">Askıda</option>
+        </select>
       </div>
 
       {list.length === 0 ? (
-        <p className="account-empty">Bu filtrede üye yok.</p>
+        <p className="account-empty">Kayıt yok.</p>
       ) : (
         <div className="admin-cards">
-          {list.map((u) => {
-            const userOrders = getUserOrders(u.id);
-            return (
-              <div className="pending-card" key={u.id}>
-                <div className="app-card-head">
-                  <strong>{u.companyName || u.fullName}</strong>
-                  <span className={`mini-status ${u.status}`}>
-                    {statusLabel(u.status)}
-                  </span>
-                </div>
-                <ul className="account-info">
-                  <li>
-                    <span>Yetkili</span>
-                    <strong>{u.fullName}</strong>
-                  </li>
-                  <li>
-                    <span>Telefon</span>
-                    <strong>{u.phone || '—'}</strong>
-                  </li>
-                  <li>
-                    <span>E-posta</span>
-                    <strong>{u.email}</strong>
-                  </li>
-                  <li>
-                    <span>Tarih</span>
-                    <strong>
-                      {new Date(u.createdAt).toLocaleDateString('tr-TR')}
-                    </strong>
-                  </li>
-                  <li>
-                    <span>Sipariş</span>
-                    <strong>{userOrders.length}</strong>
-                  </li>
-                </ul>
-
-                <div className="pending-actions">
-                  {u.status === 'pending' && (
-                    <ApproveControl
-                      requested={u.requestedType}
-                      onApprove={(tier) => {
-                        approveUser(u.id, tier);
-                        showToast(`${u.companyName} onaylandı`);
-                      }}
-                      onReject={() => {
-                        rejectUser(u.id);
-                        showToast('Reddedildi');
-                      }}
-                    />
-                  )}
-                  {u.status === 'approved' && (
-                    <>
-                      <label>Seviye</label>
-                      <select
-                        value={u.tier || 'perakende'}
-                        onChange={(e) => {
-                          setUserTier(u.id, e.target.value);
-                          showToast('Seviye güncellendi');
-                        }}
-                      >
-                        <option value="perakende">Perakendeci</option>
-                        <option value="temsilci">Temsilci</option>
-                      </select>
-                      <button
-                        className="reject-btn"
-                        onClick={() => {
-                          suspendUser(u.id);
-                          showToast('Askıya alındı');
-                        }}
-                      >
-                        Askıya Al
-                      </button>
-                    </>
-                  )}
-                  {(u.status === 'rejected' || u.status === 'suspended') && (
-                    <button
-                      className="approve-btn"
-                      onClick={() => {
-                        approveUser(u.id, u.tier || u.requestedType || 'perakende');
-                        showToast('Onaylandı');
-                      }}
-                    >
-                      ✓ Onayla
-                    </button>
-                  )}
-                  <button
-                    className="link-btn danger"
-                    onClick={() => {
-                      if (confirm('Üye kalıcı olarak silinsin mi?')) {
-                        deleteUser(u.id);
-                        showToast('Üye silindi');
-                      }
-                    }}
-                  >
-                    Sil
-                  </button>
-                </div>
-
-                <button
-                  className="link-btn"
-                  onClick={() => setOpen(open === u.id ? null : u.id)}
-                >
-                  {open === u.id ? 'Notu gizle' : 'Not ekle / siparişler'}
-                </button>
-                {open === u.id && (
-                  <div className="member-extra">
-                    <textarea
-                      rows={2}
-                      placeholder="Üye hakkında not…"
-                      defaultValue={u.note || ''}
-                      onBlur={(e) => setUserNote(u.id, e.target.value)}
-                    />
-                    {userOrders.length > 0 && (
-                      <div className="member-orders">
-                        {userOrders.map((o) => (
-                          <div className="dash-row" key={o.code}>
-                            <strong>{o.code}</strong>
-                            <span>{formatPrice(o.total)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {list.map((u) => (
+            <MemberCard
+              key={u.id}
+              u={u}
+              orders={getUserOrders(u.id)}
+              onApprove={(tier) => {
+                approveUser(u.id, tier);
+                showToast(`${u.companyName} onaylandı`);
+              }}
+              onReject={() => {
+                rejectUser(u.id);
+                showToast('Reddedildi');
+              }}
+              onTier={(tier) => {
+                setUserTier(u.id, tier);
+                showToast('Seviye güncellendi');
+              }}
+              onSuspend={() => {
+                suspendUser(u.id);
+                showToast('Askıya alındı');
+              }}
+              onDelete={() => {
+                if (confirm('Üye silinsin mi?')) {
+                  deleteUser(u.id);
+                  showToast('Üye silindi');
+                }
+              }}
+              onNote={(note) => setUserNote(u.id, note)}
+            />
+          ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
-function ApproveControl({ requested, onApprove, onReject }) {
-  const [tier, setTier] = useState(requested || 'perakende');
+function MemberCard({ u, orders, onApprove, onReject, onTier, onSuspend, onDelete, onNote }) {
+  const [tier, setTier] = useState(u.tier || u.requestedType || 'perakende');
+  const [note, setNote] = useState(u.note || '');
+  const [showOrders, setShowOrders] = useState(false);
+
+  const statusLabel = {
+    pending: 'Beklemede',
+    approved: 'Onaylı',
+    rejected: 'Reddedildi',
+    suspended: 'Askıda',
+  }[u.status];
+
   return (
-    <>
-      <label>Seviye ata</label>
-      <select value={tier} onChange={(e) => setTier(e.target.value)}>
-        <option value="perakende">Perakendeci</option>
-        <option value="temsilci">Temsilci</option>
-      </select>
-      <button className="approve-btn" onClick={() => onApprove(tier)}>
-        ✓ Onayla
-      </button>
-      <button className="reject-btn" onClick={onReject}>
-        ✕ Reddet
-      </button>
-    </>
+    <div className="pending-card">
+      <div className="app-card-head">
+        <strong>{u.companyName || u.fullName}</strong>
+        <span className={`mini-status ${u.status}`}>{statusLabel}</span>
+      </div>
+      <ul className="account-info">
+        <li>
+          <span>Yetkili</span>
+          <strong>{u.fullName}</strong>
+        </li>
+        <li>
+          <span>Telefon</span>
+          <strong>{u.phone}</strong>
+        </li>
+        <li>
+          <span>E-posta</span>
+          <strong>{u.email}</strong>
+        </li>
+        <li>
+          <span>Başvuru</span>
+          <strong>{new Date(u.createdAt).toLocaleDateString('tr-TR')}</strong>
+        </li>
+        <li>
+          <span>Üyelik Tipi</span>
+          <strong>
+            {u.status === 'approved' ? TIERS[u.tier]?.label || u.tier : '—'}
+          </strong>
+        </li>
+      </ul>
+
+      <div className="member-actions">
+        {u.status === 'pending' && (
+          <>
+            <select value={tier} onChange={(e) => setTier(e.target.value)}>
+              <option value="perakende">Perakendeci</option>
+              <option value="temsilci">Temsilci</option>
+            </select>
+            <button className="approve-btn" onClick={() => onApprove(tier)}>
+              ✓ Onayla
+            </button>
+            <button className="reject-btn" onClick={onReject}>
+              ✕ Reddet
+            </button>
+          </>
+        )}
+        {u.status === 'approved' && (
+          <>
+            <select
+              value={u.tier || 'perakende'}
+              onChange={(e) => onTier(e.target.value)}
+            >
+              <option value="perakende">Perakendeci</option>
+              <option value="temsilci">Temsilci</option>
+            </select>
+            <button className="reject-btn" onClick={onSuspend}>
+              Askıya Al
+            </button>
+          </>
+        )}
+        {(u.status === 'rejected' || u.status === 'suspended') && (
+          <button className="approve-btn" onClick={() => onApprove(tier)}>
+            ✓ Onayla
+          </button>
+        )}
+        <button className="text-btn danger" onClick={onDelete}>
+          Sil
+        </button>
+      </div>
+
+      <div className="member-extra">
+        <button
+          className="text-btn"
+          onClick={() => setShowOrders((s) => !s)}
+        >
+          Siparişleri ({orders.length}) {showOrders ? '▲' : '▼'}
+        </button>
+        {showOrders && (
+          <div className="order-list compact">
+            {orders.length === 0 ? (
+              <p className="account-empty">Sipariş yok.</p>
+            ) : (
+              orders.map((o) => (
+                <div className="order-row" key={o.code}>
+                  <strong>{o.code}</strong>
+                  <span>{formatPrice(o.total)}</span>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+        <div className="note-row">
+          <input
+            value={note}
+            placeholder="Üye notu..."
+            onChange={(e) => setNote(e.target.value)}
+            onBlur={() => onNote(note)}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
-/* ---------------- AYARLAR ---------------- */
-function SettingsTab({ showToast }) {
+/* ============================ AYARLAR ============================ */
+function SettingsAdmin() {
   const { settings, updateSettings } = useSettings();
+  const { showToast } = useCart();
   const [form, setForm] = useState(settings);
 
+  const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
   const save = () => {
     updateSettings(form);
     showToast('Ayarlar kaydedildi');
   };
 
   return (
-    <section className="admin-section">
+    <div className="settings-wrap">
       <h2 className="admin-h2">Ayarlar</h2>
-      <div className="settings-form">
-        <label>
-          WhatsApp Numarası (90 ile, boşluksuz)
-          <input
-            value={form.whatsapp}
-            onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-            placeholder="905551112233"
-          />
-        </label>
-        <label>
-          Mağaza Adı
-          <input
-            value={form.storeName}
-            onChange={(e) => setForm({ ...form, storeName: e.target.value })}
-          />
-        </label>
-        <label>
-          İletişim E-postası
-          <input
-            value={form.contactEmail}
-            onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
-          />
-        </label>
-        <label>
-          Üst Şerit Yazısı
-          <input
-            value={form.topBar}
-            onChange={(e) => setForm({ ...form, topBar: e.target.value })}
-          />
-        </label>
-        <label>
-          Yönetici Şifresi
+      <div className="account-card">
+        <div className="form-group">
+          <label>Mağaza Adı</label>
+          <input value={form.storeName} onChange={(e) => set('storeName', e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label>WhatsApp Numarası (905XXXXXXXXX)</label>
+          <input value={form.whatsapp} onChange={(e) => set('whatsapp', e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label>İletişim E-postası</label>
+          <input value={form.contactEmail} onChange={(e) => set('contactEmail', e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label>Üst Şerit Yazısı</label>
+          <input value={form.topBar} onChange={(e) => set('topBar', e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label>Yönetici Şifresi</label>
           <input
             type="text"
             value={form.adminPassword}
-            onChange={(e) => setForm({ ...form, adminPassword: e.target.value })}
+            onChange={(e) => set('adminPassword', e.target.value)}
           />
-        </label>
-        <button className="checkout-btn" onClick={save}>
+        </div>
+        <button className="btn-primary" onClick={save}>
           Ayarları Kaydet
         </button>
-        <p className="upload-hint">
-          ⚠️ Demo modunda bu ayarlar bu tarayıcıda saklanır. Veritabanı
-          bağlanınca kalıcı olacak.
-        </p>
       </div>
-    </section>
+    </div>
   );
-}
-
-function statusLabel(s) {
-  return s === 'approved'
-    ? 'Onaylı'
-    : s === 'rejected'
-    ? 'Reddedildi'
-    : s === 'suspended'
-    ? 'Askıda'
-    : 'Beklemede';
 }
