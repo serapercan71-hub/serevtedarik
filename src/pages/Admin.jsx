@@ -7,11 +7,13 @@ import { useSettings } from '../context/SettingsContext.jsx';
 import { useCart, formatPrice } from '../context/CartContext.jsx';
 import { TIERS } from '../data/store.js';
 import Thumb from '../components/Thumb.jsx';
+import { IconShield } from '../components/icons.jsx';
 import { fileToWebp } from '../lib/image.js';
 import AdminLogin from './AdminLogin.jsx';
 
 const TABS = [
   { key: 'panel', label: 'Panel' },
+  { key: 'basvurular', label: 'Başvurular' },
   { key: 'urunler', label: 'Ürünler' },
   { key: 'siparisler', label: 'Siparişler' },
   { key: 'uyeler', label: 'Üyeler' },
@@ -34,11 +36,14 @@ function waLink(phone, text = '') {
 }
 
 export default function Admin() {
-  const { isAdmin, logout } = useAuth();
+  const { isAdmin, logout, users } = useAuth();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const [tab, setTab] = useState('panel');
 
   if (!isAdmin) return <AdminLogin />;
+
+  const pendingCount = users.filter((u) => u.status === 'pending').length;
 
   const handleLogout = () => {
     logout();
@@ -51,13 +56,21 @@ export default function Admin() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <header className="checkout-header">
-        <div className="container header-inner">
+      <header className="admin-header">
+        <div className="container admin-header-inner">
           <Link to="/" className="logo">
             <img src="/img/logo.png" alt="Serap Ercan Logo" className="logo-img" />
           </Link>
-          <span className="admin-badge">Yönetici Paneli</span>
-          <button className="logout-btn admin-logout" onClick={handleLogout}>
+          <div className="admin-title">
+            <span className="shield-badge">
+              <IconShield width={22} height={22} />
+            </span>
+            <div>
+              <strong>Yönetici Paneli</strong>
+              <span>{settings.storeName} yönetim merkezi</span>
+            </div>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
             Çıkış
           </button>
         </div>
@@ -72,14 +85,24 @@ export default function Admin() {
               onClick={() => setTab(t.key)}
             >
               {t.label}
+              {t.key === 'basvurular' && (
+                <span
+                  className={`tab-count${pendingCount > 0 ? ' hot' : ''}`}
+                >
+                  {pendingCount}
+                </span>
+              )}
             </button>
           ))}
         </nav>
 
         {tab === 'panel' && <Dashboard onGo={setTab} />}
+        {tab === 'basvurular' && (
+          <MembersAdmin initialFilter="pending" title="Üyelik Başvuruları" />
+        )}
         {tab === 'urunler' && <ProductsAdmin />}
         {tab === 'siparisler' && <OrdersAdmin />}
-        {tab === 'uyeler' && <MembersAdmin />}
+        {tab === 'uyeler' && <MembersAdmin initialFilter="all" title="Tüm Üyeler" />}
         {tab === 'ayarlar' && <SettingsAdmin />}
       </div>
     </motion.div>
@@ -598,7 +621,7 @@ function OrdersAdmin() {
 }
 
 /* ============================ ÜYELER ============================ */
-function MembersAdmin() {
+function MembersAdmin({ initialFilter = 'all', title = 'Tüm Üyeler' }) {
   const {
     users,
     approveUser,
@@ -610,7 +633,7 @@ function MembersAdmin() {
     getUserOrders,
   } = useAuth();
   const { showToast } = useCart();
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(initialFilter);
 
   const order = { pending: 0, approved: 1, suspended: 2, rejected: 3 };
   const list = [...users]
@@ -625,7 +648,7 @@ function MembersAdmin() {
     <div>
       <div className="admin-toolbar">
         <h2 className="admin-h2">
-          Üyelik Başvuruları <span className="count-pill">{users.length}</span>
+          {title} <span className="count-pill">{list.length}</span>
         </h2>
         <select
           className="filter-select"
