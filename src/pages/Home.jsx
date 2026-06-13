@@ -13,7 +13,7 @@ import {
   IconTruck,
   IconImage,
 } from '../components/icons.jsx';
-import { products, categories } from '../data/products.js';
+import { useCatalog } from '../context/CatalogContext.jsx';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -53,6 +53,7 @@ const testimonials = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const { products, categories } = useCatalog();
 
   return (
     <motion.div
@@ -158,18 +159,18 @@ export default function Home() {
         <div className="categories">
           {categories.map((cat) => (
             <motion.div
-              key={cat.name}
+              key={cat}
               className="category-card cat-visual"
               {...fadeUp}
               whileHover={{ y: -8 }}
               onClick={() =>
-                navigate(`/urunler?kategori=${encodeURIComponent(cat.name)}`)
+                navigate(`/urunler?kategori=${encodeURIComponent(cat)}`)
               }
             >
               <div className="cat-img-wrap">
-                <Thumb src={cat.img} alt={cat.name} className="cat-img" />
+                <Thumb src="" alt={cat} className="cat-img" />
               </div>
-              <h3>{cat.name}</h3>
+              <h3>{cat}</h3>
               <span className="cat-link">Keşfet →</span>
             </motion.div>
           ))}

@@ -8,13 +8,14 @@ import ProductCard from '../components/ProductCard.jsx';
 import Stars from '../components/Stars.jsx';
 import Price from '../components/Price.jsx';
 import Thumb from '../components/Thumb.jsx';
-import { getProductById, getRelatedProducts } from '../data/products.js';
+import { useCatalog } from '../context/CatalogContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import NotFound from './NotFound.jsx';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const { getProductById, getRelated } = useCatalog();
   const product = getProductById(id);
   const { addItem } = useCart();
   const { user, isApproved, getProductPrice } = useAuth();
@@ -23,7 +24,7 @@ export default function ProductDetail() {
 
   if (!product) return <NotFound />;
 
-  const related = getRelatedProducts(product);
+  const related = getRelated(product);
   const isMember = user?.role === 'member';
 
   const handleAdd = () => {

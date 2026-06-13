@@ -5,10 +5,7 @@ import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
-import { products } from '../data/products.js';
-
-// Ürünlerde geçen tüm kategoriler (tekrarsız) + "Tümü"
-const allCategories = ['Tümü', ...new Set(products.map((p) => p.category))];
+import { useCatalog } from '../context/CatalogContext.jsx';
 
 const sortOptions = [
   { value: 'default', label: 'Önerilen' },
@@ -18,6 +15,9 @@ const sortOptions = [
 ];
 
 export default function Products() {
+  const { products, categories } = useCatalog();
+  // Kataloğun kategorileri + "Tümü"
+  const allCategories = ['Tümü', ...categories];
   const [params, setParams] = useSearchParams();
   const query = params.get('q') || '';
   const category = params.get('kategori') || 'Tümü';
@@ -53,7 +53,7 @@ export default function Products() {
       list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
     return list;
-  }, [query, category, sort]);
+  }, [products, query, category, sort]);
 
   return (
     <motion.div

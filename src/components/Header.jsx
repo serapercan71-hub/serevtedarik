@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
+import { useSettings } from '../context/SettingsContext.jsx';
 import {
   IconInstagram,
   IconHeart,
@@ -21,6 +22,7 @@ export default function Header() {
   const { totalItems, openCart } = useCart();
   const { user, isAdmin, isMember } = useAuth();
   const { count: favCount } = useFavorites();
+  const { settings } = useSettings();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,9 +64,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="top-bar">
-        Toptan & perakende tedarik · Üye girişi yaparak özel fiyatlarınızı görün
-      </div>
+      <div className="top-bar">{settings.topBar}</div>
 
       <header className={`site-header${sticky ? ' sticky' : ''}`}>
         <div className="container header-inner">

@@ -1,10 +1,13 @@
+import { useSettings } from '../context/SettingsContext.jsx';
+
 export default function Footer() {
+  const { settings } = useSettings();
   return (
     <footer className="footer">
       <div className="footer-grid">
         <div className="footer-col">
           <h4>İletişim Bilgileri</h4>
-          <p>E-Posta: serapercan71@gmail.com</p>
+          <p>E-Posta: {settings.contactEmail}</p>
           <p>Sipariş & İletişim: WhatsApp</p>
           <p>Çalışma Saatleri: 09:00 - 18:00</p>
         </div>

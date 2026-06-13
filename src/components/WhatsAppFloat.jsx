@@ -1,9 +1,10 @@
-import { SELLER_WHATSAPP } from '../data/store.js';
+import { useSettings } from '../context/SettingsContext.jsx';
 
 export default function WhatsAppFloat() {
+  const { settings } = useSettings();
   return (
     <a
-      href={`https://wa.me/${SELLER_WHATSAPP}`}
+      href={`https://wa.me/${settings.whatsapp}`}
       className="whatsapp-float"
       target="_blank"
       rel="noreferrer"

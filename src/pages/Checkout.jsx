@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import Thumb from '../components/Thumb.jsx';
 import { useCart, formatPrice } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
-import { SELLER_WHATSAPP, STORE_NAME, generateOrderCode } from '../data/store.js';
+import { useSettings } from '../context/SettingsContext.jsx';
+import { generateOrderCode } from '../data/store.js';
 
 const initialForm = {
   email: '',
@@ -28,6 +29,7 @@ const cityNames = {
 export default function Checkout() {
   const { items, totalAmount, clearCart, showToast } = useCart();
   const { user, addOrder } = useAuth();
+  const { settings } = useSettings();
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [order, setOrder] = useState(null); // sipariş oluşunca dolar
@@ -54,7 +56,7 @@ export default function Checkout() {
   // WhatsApp mesajını oluştur (sipariş talebi — ödeme/kargo yok)
   const buildWhatsappText = (code) => {
     const lines = [];
-    lines.push(`*${STORE_NAME} - Sipariş Talebi*`);
+    lines.push(`*${settings.storeName} - Sipariş Talebi*`);
     lines.push(`Sipariş Kodu: *${code}*`);
     lines.push('');
     lines.push('*Ürünler:*');
@@ -81,7 +83,7 @@ export default function Checkout() {
 
   const openWhatsapp = (code) => {
     const text = encodeURIComponent(buildWhatsappText(code));
-    window.open(`https://wa.me/${SELLER_WHATSAPP}?text=${text}`, '_blank');
+    window.open(`https://wa.me/${settings.whatsapp}?text=${text}`, '_blank');
   };
 
   const handleSubmit = (e) => {

@@ -5,11 +5,12 @@ import Footer from '../components/Footer.jsx';
 import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { IconHeart } from '../components/icons.jsx';
-import { products } from '../data/products.js';
+import { useCatalog } from '../context/CatalogContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 
 export default function Favorites() {
   const { ids } = useFavorites();
+  const { products } = useCatalog();
   const favProducts = products.filter((p) => ids.includes(p.id));
 
   return (

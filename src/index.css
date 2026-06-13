@@ -280,6 +280,500 @@ header.site-header.sticky .logo-img {
 }
 
 /* ============================================================
+   ADMIN PANELİ — sekmeli CMS
+   ============================================================ */
+.admin-tabs-bar {
+  background: var(--white);
+  border-bottom: 1px solid rgba(86, 124, 141, 0.12);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+.admin-tab {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--teal);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  transition: var(--fast-trans);
+  white-space: nowrap;
+}
+.admin-tab:hover {
+  color: var(--navy-dark);
+}
+.admin-tab.active {
+  color: var(--navy-dark);
+  border-bottom-color: var(--teal);
+}
+.tab-dot {
+  width: 7px;
+  height: 7px;
+  background: #f5a623;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.admin-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* Dashboard */
+.dash-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin-bottom: 35px;
+}
+.dash-card {
+  background: var(--white);
+  border: 1px solid rgba(86, 124, 141, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--fast-trans);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dash-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.dash-card.accent {
+  background: var(--gradient-teal);
+}
+.dash-card.accent .dash-value,
+.dash-card.accent .dash-label {
+  color: var(--white);
+}
+.dash-value {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--navy-dark);
+}
+.dash-label {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+}
+.dash-recent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.dash-col {
+  background: var(--white);
+  border: 1px solid rgba(86, 124, 141, 0.1);
+  border-radius: 16px;
+  padding: 22px;
+}
+.dash-col h3 {
+  font-size: 15px;
+  color: var(--navy-dark);
+  margin-bottom: 14px;
+}
+.dash-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(86, 124, 141, 0.08);
+  font-size: 13px;
+  color: var(--navy);
+}
+.dash-row:last-child {
+  border-bottom: none;
+}
+
+/* Kategori yöneticisi */
+.cat-manager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  background: var(--white);
+  border: 1px solid rgba(86, 124, 141, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.cat-manager-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal);
+  margin-right: 4px;
+}
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--beige);
+  border-radius: 50px;
+  padding: 5px 6px 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy-dark);
+}
+.cat-chip button {
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--navy);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.cat-chip button:hover {
+  background: #f5c6c2;
+  color: #c0392b;
+}
+
+/* Ürün listesi */
+.admin-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.admin-product-row {
+  display: grid;
+  grid-template-columns: 56px 1.6fr 1.4fr auto auto;
+  align-items: center;
+  gap: 14px;
+  background: var(--white);
+  border: 1px solid rgba(86, 124, 141, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.apr-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.apr-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.apr-info strong {
+  font-size: 14px;
+  color: var(--navy-dark);
+}
+.apr-info span {
+  font-size: 12px;
+  color: var(--teal);
+}
+.apr-prices {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--navy);
+}
+.apr-actions {
+  display: flex;
+  gap: 8px;
+}
+.reject-btn.small,
+.mini-btn {
+  padding: 7px 13px;
+  font-size: 12px;
+}
+
+/* Modal */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 38, 52, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1200;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+.admin-modal {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 30px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: var(--shadow-lg);
+}
+.admin-modal h3 {
+  font-size: 20px;
+  color: var(--navy-dark);
+  margin-bottom: 22px;
+}
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.admin-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.admin-form-grid .af-full {
+  grid-column: 1 / -1;
+}
+.admin-form-grid input,
+.admin-form-grid select,
+.admin-form-grid textarea {
+  padding: 11px 13px;
+  border: 1px solid var(--sky-blue);
+  border-radius: 9px;
+  font-size: 14px;
+  color: var(--navy-dark);
+  outline: none;
+  font-family: inherit;
+  transition: var(--fast-trans);
+}
+.admin-form-grid input:focus,
+.admin-form-grid select:focus,
+.admin-form-grid textarea:focus {
+  border-color: var(--teal);
+}
+.af-check {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+.af-check input {
+  width: 18px;
+  height: 18px;
+}
+.new-cat-row {
+  flex-direction: row !important;
+  gap: 8px !important;
+  align-items: center;
+}
+.new-cat-row input {
+  flex: 1;
+}
+.image-upload {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 16px !important;
+}
+.upload-preview {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--sky-blue);
+}
+.upload-btn {
+  display: inline-block;
+  background: var(--gradient-teal);
+  color: var(--white) !important;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.upload-hint {
+  font-size: 12px;
+  color: var(--teal);
+  margin-top: 6px;
+  font-weight: 400;
+}
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  text-decoration: underline;
+}
+.link-btn.danger {
+  color: #c0392b;
+}
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.admin-modal-actions .checkout-btn {
+  width: auto;
+  padding: 13px 28px;
+}
+
+/* Siparişler */
+.filter-select {
+  padding: 10px 14px;
+  border: 1px solid var(--sky-blue);
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy-dark);
+}
+.order-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.order-admin-card {
+  background: var(--white);
+  border: 1px solid rgba(86, 124, 141, 0.1);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.oac-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  cursor: pointer;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.oac-date {
+  display: block;
+  font-size: 12px;
+  color: var(--teal);
+  margin-top: 2px;
+}
+.oac-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.oac-right select {
+  padding: 7px 10px;
+  border: 1px solid var(--sky-blue);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy-dark);
+}
+.oac-detail {
+  padding: 0 18px 18px;
+  border-top: 1px solid rgba(86, 124, 141, 0.1);
+}
+.oac-items {
+  margin: 14px 0;
+}
+.oac-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--navy);
+  padding: 5px 0;
+}
+.oac-meta p {
+  font-size: 13px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.oac-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.mini-btn.wa {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+}
+
+/* Üye ekstra */
+.member-extra {
+  margin-top: 12px;
+}
+.member-extra textarea {
+  width: 100%;
+  border: 1px solid var(--sky-blue);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+.member-orders {
+  margin-top: 8px;
+}
+
+/* Ayarlar */
+.settings-form {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.settings-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.settings-form input {
+  padding: 12px 14px;
+  border: 1px solid var(--sky-blue);
+  border-radius: 9px;
+  font-size: 14px;
+  color: var(--navy-dark);
+  outline: none;
+}
+.settings-form input:focus {
+  border-color: var(--teal);
+}
+.settings-form .checkout-btn {
+  width: auto;
+  align-self: flex-start;
+  padding: 13px 28px;
+}
+
+@media (max-width: 760px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .dash-recent {
+    grid-template-columns: 1fr;
+  }
+  .admin-product-row {
+    grid-template-columns: 48px 1fr;
+    grid-template-areas:
+      'thumb info'
+      'prices prices'
+      'actions actions';
+  }
+  .admin-product-row .apr-thumb {
+    grid-area: thumb;
+  }
+}
+
+/* ============================================================
    CANLANDIRMA PAKETİ — görselli kategoriler, skeleton, quick-view,
    yorumlar, mobil menü, galeri, micro-interaction
    ============================================================ */
