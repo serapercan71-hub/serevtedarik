@@ -195,6 +195,14 @@ function Dashboard({ onGo }) {
 }
 
 /* ============================ ÜRÜNLER ============================ */
+const BADGE_OPTIONS = [
+  { value: '', label: 'Rozet Yok' },
+  { value: 'Yeni', label: 'Yeni', tone: 'new' },
+  { value: 'Çok Satan', label: 'Çok Satan', tone: 'hot' },
+  { value: 'İndirim', label: 'İndirim', tone: 'discount' },
+  { value: 'Tükendi', label: 'Tükendi', tone: 'sold' },
+];
+
 const emptyProduct = {
   title: '',
   desc: '',
@@ -416,11 +424,20 @@ function ProductForm({ initial, categories, onClose, onSave, onOpenCat }) {
           <div className="form-row">
             <div className="form-group">
               <label>Rozet (opsiyonel)</label>
-              <input
-                value={form.badge}
-                placeholder="Yeni, Çok Satan..."
-                onChange={(e) => set('badge', e.target.value)}
-              />
+              <div className="badge-picker">
+                {BADGE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value || 'none'}
+                    type="button"
+                    className={`badge-chip ${opt.tone || ''} ${
+                      form.badge === opt.value ? 'active' : ''
+                    }`}
+                    onClick={() => set('badge', opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
             <label className="stock-toggle">
               <input

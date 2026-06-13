@@ -3663,6 +3663,74 @@ a.price-locked:hover {
   margin-bottom: 3px;
 }
 
+/* ---- ROZET SEÇİCİ ---- */
+.badge-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.badge-chip {
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 1.5px solid #d8e3e8;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--fast-trans);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge-chip::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c2cdd2;
+  flex-shrink: 0;
+}
+.badge-chip.new::before {
+  background: #2e9e7a;
+}
+.badge-chip.hot::before {
+  background: #e6852b;
+}
+.badge-chip.discount::before {
+  background: #d6486a;
+}
+.badge-chip.sold::before {
+  background: #9aa3a8;
+}
+.badge-chip:hover {
+  border-color: var(--teal);
+  transform: translateY(-1px);
+}
+.badge-chip.active {
+  color: var(--white);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(86, 124, 141, 0.22);
+}
+.badge-chip.active::before {
+  background: var(--white);
+}
+.badge-chip.active.new {
+  background: #2e9e7a;
+}
+.badge-chip.active.hot {
+  background: #e6852b;
+}
+.badge-chip.active.discount {
+  background: #d6486a;
+}
+.badge-chip.active.sold {
+  background: #7c868b;
+}
+.badge-chip.active:not(.new):not(.hot):not(.discount):not(.sold) {
+  background: var(--gradient-teal, #567c8d);
+}
+
 /* ---- ADMIN ---- */
 .admin-badge {
   font-weight: 700;
