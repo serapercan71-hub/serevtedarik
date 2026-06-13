@@ -5,11 +5,13 @@ import Footer from '../components/Footer.jsx';
 import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import Stars from '../components/Stars.jsx';
+import Thumb from '../components/Thumb.jsx';
 import {
   IconBadgeCheck,
   IconTag,
   IconChat,
   IconTruck,
+  IconImage,
 } from '../components/icons.jsx';
 import { products, categories } from '../data/products.js';
 
@@ -20,11 +22,11 @@ const fadeUp = {
   transition: { duration: 0.5, ease: 'easeOut' },
 };
 
-// Hero kolajındaki yüzen ürün görselleri
-const heroImages = [
-  { src: '/img/urun-mutfak-seti.jpg', cls: 'hc-1', delay: 0 },
-  { src: '/img/urun-3.jpg', cls: 'hc-2', delay: 0.8 },
-  { src: '/img/urun-2.jpg', cls: 'hc-3', delay: 1.6 },
+// Hero kolajındaki yüzen kutular (fotoğraf yok — placeholder)
+const heroCards = [
+  { cls: 'hc-1', delay: 0 },
+  { cls: 'hc-2', delay: 0.8 },
+  { cls: 'hc-3', delay: 1.6 },
 ];
 
 // Örnek müşteri yorumları — gerçek yorumlar gelince değiştirilecek
@@ -92,24 +94,24 @@ export default function Home() {
           </motion.div>
 
           <div className="hero-collage" aria-hidden="true">
-            {heroImages.map((im) => (
-              <motion.img
-                key={im.cls}
-                src={im.src}
-                alt=""
-                className={`hero-card ${im.cls}`}
-                initial={{ opacity: 0, y: 30, rotate: 0 }}
+            {heroCards.map((c) => (
+              <motion.div
+                key={c.cls}
+                className={`hero-card img-ph ${c.cls}`}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: [0, -10, 0] }}
                 transition={{
-                  opacity: { duration: 0.6, delay: im.delay * 0.3 },
+                  opacity: { duration: 0.6, delay: c.delay * 0.3 },
                   y: {
                     duration: 5,
                     repeat: Infinity,
                     ease: 'easeInOut',
-                    delay: im.delay,
+                    delay: c.delay,
                   },
                 }}
-              />
+              >
+                <IconImage />
+              </motion.div>
             ))}
             <div className="hero-blob" />
           </div>
@@ -165,7 +167,7 @@ export default function Home() {
               }
             >
               <div className="cat-img-wrap">
-                <img src={cat.img} alt={cat.name} loading="lazy" />
+                <Thumb src={cat.img} alt={cat.name} className="cat-img" />
               </div>
               <h3>{cat.name}</h3>
               <span className="cat-link">Keşfet →</span>

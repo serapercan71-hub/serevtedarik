@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Stars from './Stars.jsx';
 import Price from './Price.jsx';
+import Thumb from './Thumb.jsx';
 import { IconHeart } from './icons.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -56,12 +57,7 @@ export default function ProductCard({ product }) {
       </button>
       <Link to={`/urun/${product.id}`} className="product-link">
         <div className="product-img-wrap">
-          <img
-            src={product.img}
-            alt={product.title}
-            className="product-img"
-            loading="lazy"
-          />
+          <Thumb src={product.img} alt={product.title} className="product-img" />
           <span className="quick-view">İncele</span>
         </div>
         <h3 className="product-title">{product.title}</h3>

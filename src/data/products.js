@@ -6,7 +6,7 @@ export const products = [
     title: 'Solingen Tırtıklı Bıçak Seti',
     price: 350,
     priceTemsilci: 300,
-    img: '/img/urun-bicak.jpg',
+    img: '',
     badge: 'Yeni',
     inStock: true,
     rating: 4.8,
@@ -25,7 +25,7 @@ export const products = [
     title: 'Dekoratif Yapışkanlı Raf',
     price: 180,
     priceTemsilci: 150,
-    img: '/img/urun-raf.jpg',
+    img: '',
     badge: 'Tükendi',
     inStock: false,
     rating: 4.3,
@@ -44,7 +44,7 @@ export const products = [
     title: 'Solingen 8 Parça Mutfak Seti',
     price: 890,
     priceTemsilci: 760,
-    img: '/img/urun-mutfak-seti.jpg',
+    img: '',
     badge: 'Çok Satan',
     inStock: true,
     rating: 4.9,
@@ -63,7 +63,7 @@ export const products = [
     title: 'Orijinal Solingen Tekli Bıçak',
     price: 150,
     priceTemsilci: 125,
-    img: '/img/urun-1.jpg',
+    img: '',
     inStock: true,
     rating: 4.6,
     reviewCount: 89,
@@ -81,7 +81,7 @@ export const products = [
     title: 'Premium Saklama Kabı',
     price: 220,
     priceTemsilci: 185,
-    img: '/img/urun-2.jpg',
+    img: '',
     inStock: true,
     rating: 4.7,
     reviewCount: 67,
@@ -99,7 +99,7 @@ export const products = [
     title: 'Çelik Suluk & Matara',
     price: 195,
     priceTemsilci: 165,
-    img: '/img/urun-3.jpg',
+    img: '',
     inStock: true,
     rating: 4.5,
     reviewCount: 143,
@@ -115,10 +115,10 @@ export const products = [
 ];
 
 export const categories = [
-  { icon: '🍽️', name: 'Mutfak Gereçleri', img: '/img/urun-mutfak-seti.jpg' },
-  { icon: '📦', name: 'Saklama Kapları', img: '/img/urun-2.jpg' },
-  { icon: '🧴', name: 'Suluk & Matara', img: '/img/urun-3.jpg' },
-  { icon: '🧵', name: 'Tekstil Ürünleri', img: '/img/urun-raf.jpg' },
+  { icon: '🍽️', name: 'Mutfak Gereçleri', img: '' },
+  { icon: '📦', name: 'Saklama Kapları', img: '' },
+  { icon: '🧴', name: 'Suluk & Matara', img: '' },
+  { icon: '🧵', name: 'Tekstil Ürünleri', img: '' },
 ];
 
 export function getProductById(id) {

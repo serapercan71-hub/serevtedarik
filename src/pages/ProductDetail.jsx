@@ -7,6 +7,7 @@ import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import Stars from '../components/Stars.jsx';
 import Price from '../components/Price.jsx';
+import Thumb from '../components/Thumb.jsx';
 import { getProductById, getRelatedProducts } from '../data/products.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -191,10 +192,16 @@ export default function ProductDetail() {
 // Görsel galerisi: küçük önizlemeler + imleci takip eden zoom.
 // Ürüne `images: ['/img/a.jpg', ...]` eklenirse hepsi listelenir; yoksa tek görsel.
 function Gallery({ product }) {
-  const images =
-    product.images && product.images.length > 0 ? product.images : [product.img];
+  const images = (
+    product.images && product.images.length > 0 ? product.images : [product.img]
+  ).filter(Boolean);
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState({ on: false, x: 50, y: 50 });
+
+  // Görsel yoksa: zoom olmayan temiz placeholder
+  if (images.length === 0) {
+    return <Thumb className="detail-img" alt={product.title} />;
+  }
 
   const handleMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();

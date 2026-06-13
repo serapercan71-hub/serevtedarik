@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import Thumb from './Thumb.jsx';
 import { useCart, formatPrice } from '../context/CartContext.jsx';
 
 export default function CartDrawer() {
@@ -60,7 +61,7 @@ export default function CartDrawer() {
                       exit={{ opacity: 0, x: 30 }}
                       transition={{ duration: 0.25 }}
                     >
-                      <img
+                      <Thumb
                         src={item.img}
                         alt={item.title}
                         className="cart-item-img"

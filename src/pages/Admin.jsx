@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useCart, formatPrice } from '../context/CartContext.jsx';
 import { products } from '../data/products.js';
 import { TIERS } from '../data/store.js';
+import Thumb from '../components/Thumb.jsx';
 import AdminLogin from './AdminLogin.jsx';
 
 export default function Admin() {
@@ -258,7 +259,7 @@ function PriceRow({ product, current, onSave }) {
   const [tem, setTem] = useState(current.temsilci);
   return (
     <div className="price-row">
-      <img src={product.img} alt={product.title} />
+      <Thumb src={product.img} alt={product.title} className="price-row-img" />
       <span className="price-row-title">{product.title}</span>
       <div className="price-input">
         <label>Perakendeci ₺</label>

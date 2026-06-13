@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Thumb from '../components/Thumb.jsx';
 import { useCart, formatPrice } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { SELLER_WHATSAPP, STORE_NAME, generateOrderCode } from '../data/store.js';
@@ -305,7 +306,7 @@ export default function Checkout() {
           <h3>Sipariş Özeti</h3>
           {items.map((item) => (
             <div className="summary-item" key={item.id}>
-              <img src={item.img} alt={item.title} className="summary-item-img" />
+              <Thumb src={item.img} alt={item.title} className="summary-item-img" />
               <div className="summary-item-info">
                 <div className="summary-item-title">{item.title}</div>
                 <div className="summary-item-qty">{item.qty} Adet</div>
