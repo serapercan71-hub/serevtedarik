@@ -58,5 +58,5 @@ create table if not exists orders (
 --  1) Siteden /kayit ile bu e-posta ile kayıt ol
 --  2) Sonra aşağıdaki satırı (e-postayı kendi adminininle değiştirip) çalıştır:
 -- update users set is_admin = true, status = 'approved', tier = 'temsilci'
---   where email = 'serapercan@gmail.com';
+--   where email = 'serapercan71@gmail.com';
 -- ============================================================

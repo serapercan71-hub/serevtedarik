@@ -12,7 +12,7 @@ export const STORE_NAME = 'Serap Ercan';
 //  ADMIN GİRİŞ BİLGİLERİ (şimdilik sabit — sonra değiştirilebilir)
 // ============================================================
 export const ADMIN = {
-  email: 'serapercan@gmail.com',
+  email: 'serapercan71@gmail.com',
   password: 'admin123',
 };
 
