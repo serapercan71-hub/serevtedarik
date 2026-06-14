@@ -359,7 +359,7 @@ function CheckoutHeader() {
           <span>←</span> Alışverişe Dön
         </Link>
         <Link to="/" className="logo">
-          <img src="/img/logo.png" alt="Serap Ercan Logo" className="logo-img" />
+          <img src="/img/logo.svg" alt="Serev Tedarik" className="logo-img" />
         </Link>
       </div>
     </header>

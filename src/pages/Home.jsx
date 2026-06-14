@@ -211,7 +211,7 @@ export default function Home() {
       <motion.section className="container simple-about" {...fadeUp}>
         <h1>Orijinal Ürünler, Güvenli Alışveriş</h1>
         <p>
-          Serap Ercan olarak; ev ve mutfak gereçlerinde kaliteyi arayanlar için
+          Serev Tedarik olarak; ev ve mutfak gereçlerinde kaliteyi arayanlar için
           en seçkin markaları bir araya getiriyoruz. İhtiyacınız olan ürünlere en
           hızlı, en güvenli ve en uygun fiyatlarla ulaşmanızı sağlamaktayız.
         </p>

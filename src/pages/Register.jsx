@@ -43,7 +43,8 @@ export default function Register() {
     if (!validate()) return;
     const res = register(form);
     if (!res.ok) {
-      setErrors({ email: res.error });
+      const field = /telefon/i.test(res.error) ? 'phone' : 'email';
+      setErrors({ [field]: res.error });
       return;
     }
     setDone(true);

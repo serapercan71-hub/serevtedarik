@@ -8,7 +8,7 @@ export const STATIC_PAGES = {
   hakkimizda: {
     title: 'Hakkımızda',
     intro:
-      'Serap Ercan; ev & yaşam ve mutfak gereçleri alanında perakende ve toptan tedarik sağlayan bir markadır.',
+      'Serev Tedarik; ev & yaşam ve mutfak gereçleri alanında perakende ve toptan tedarik sağlayan bir markadır.',
     sections: [
       {
         h: 'Biz Kimiz?',

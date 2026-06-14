@@ -49,7 +49,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <span>© {year} {settings.storeName || 'Serap Ercan'}. Tüm hakları saklıdır.</span>
+        <span>© {year} {settings.storeName || 'Serev Tedarik'}. Tüm hakları saklıdır.</span>
         <span>Toptan & perakende tedarik</span>
       </div>
     </footer>

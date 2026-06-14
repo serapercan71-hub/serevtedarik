@@ -65,13 +65,31 @@ export function AuthProvider({ children }) {
       if (email === ADMIN.email) {
         return { ok: false, error: 'Bu e-posta kullanılamaz.' };
       }
+
+      // Her üye yalnızca 1 telefon numarasıyla kayıt olabilir (benzersiz).
+      // Numarayı tek biçime getir: rakamları al, baştaki 0'ları ve 90 ülke
+      // kodunu kaldır, çekirdek 10 haneyi "0XXXXXXXXXX" olarak sakla.
+      const canonPhone = (s) => {
+        let d = String(s || '').replace(/\D/g, '').replace(/^0+/, '').replace(/^90/, '');
+        return d.length === 10 ? '0' + d : '';
+      };
+      const phoneCanon = canonPhone(form.phone);
+      if (!phoneCanon) {
+        return { ok: false, error: 'Geçerli bir telefon numarası girin.' };
+      }
+      if (users.some((u) => canonPhone(u.phone) === phoneCanon)) {
+        return {
+          ok: false,
+          error: 'Bu telefon numarası ile zaten bir kayıt var.',
+        };
+      }
       const newUser = {
         id: 'u' + Date.now(),
         companyName: form.companyName.trim(),
         taxNo: form.taxNo.trim(),
         fullName: form.fullName.trim(),
         email,
-        phone: form.phone.trim(),
+        phone: phoneCanon,
         password: form.password,
         requestedType: form.requestedType || 'perakende',
         status: 'pending',

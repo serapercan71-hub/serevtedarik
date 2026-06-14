@@ -16,7 +16,7 @@ import Admin from './pages/Admin.jsx';
 import StaticPage from './pages/StaticPage.jsx';
 import NotFound from './pages/NotFound.jsx';
 
-const STORE_NAME = import.meta.env.VITE_STORE_NAME || 'Serap Ercan';
+const STORE_NAME = import.meta.env.VITE_STORE_NAME || 'Serev Tedarik';
 
 // Sayfa başlıkları (SEO + sekme başlığı). Dinamik sayfalar (ürün detay)
 // kendi başlığını ayrıca ayarlayabilir.

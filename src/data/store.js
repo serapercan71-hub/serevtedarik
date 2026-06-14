@@ -6,7 +6,7 @@
 // Örn: Türkiye için 90 ile başlar -> '905551112233'
 export const SELLER_WHATSAPP = '905550000000'; // <-- DEĞİŞTİR
 
-export const STORE_NAME = 'Serap Ercan';
+export const STORE_NAME = 'Serev Tedarik';
 
 // ============================================================
 //  ADMIN GİRİŞ BİLGİLERİ (şimdilik sabit — sonra değiştirilebilir)
