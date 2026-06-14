@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Layout from './components/Layout.jsx';
@@ -12,10 +13,31 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Account from './pages/Account.jsx';
 import Admin from './pages/Admin.jsx';
+import StaticPage from './pages/StaticPage.jsx';
 import NotFound from './pages/NotFound.jsx';
+
+const STORE_NAME = import.meta.env.VITE_STORE_NAME || 'Serap Ercan';
+
+// Sayfa başlıkları (SEO + sekme başlığı). Dinamik sayfalar (ürün detay)
+// kendi başlığını ayrıca ayarlayabilir.
+const PAGE_TITLES = {
+  '/': 'Ana Sayfa',
+  '/urunler': 'Tüm Ürünler',
+  '/favorilerim': 'Favorilerim',
+  '/giris': 'Üye Girişi',
+  '/kayit': 'Üyelik Başvurusu',
+  '/hesabim': 'Hesabım',
+  '/odeme': 'Sipariş / Ödeme',
+  '/admin': 'Yönetici Paneli',
+};
 
 function App() {
   const location = useLocation();
+
+  useEffect(() => {
+    const t = PAGE_TITLES[location.pathname];
+    document.title = t ? `${t} | ${STORE_NAME}` : STORE_NAME;
+  }, [location.pathname]);
 
   return (
     <Layout>
@@ -40,6 +62,8 @@ function App() {
           />
           {/* /admin kendi yönetici girişini içerir (müşteri girişinden ayrı) */}
           <Route path="/admin" element={<Admin />} />
+          {/* Statik bilgi sayfaları: /sayfa/hakkimizda, /sayfa/gizlilik vb. */}
+          <Route path="/sayfa/:slug" element={<StaticPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AnimatePresence>

@@ -234,7 +234,7 @@ function Gallery({ product }) {
               className={`gallery-thumb${i === active ? ' active' : ''}`}
               onClick={() => setActive(i)}
             >
-              <img src={src} alt={`${product.title} ${i + 1}`} />
+              <img src={src} alt={`${product.title} ${i + 1}`} loading="lazy" />
             </button>
           ))}
         </div>

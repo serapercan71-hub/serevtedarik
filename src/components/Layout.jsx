@@ -3,6 +3,7 @@ import Header from './Header.jsx';
 import Footer from './Footer.jsx';
 import WhatsAppFloat from './WhatsAppFloat.jsx';
 import CartDrawer from './CartDrawer.jsx';
+import CookieConsent from './CookieConsent.jsx';
 import Toast from './Toast.jsx';
 
 // Kendi özel başlığını kullanan (standart Header/Footer almayan) sayfalar.
@@ -24,6 +25,7 @@ export default function Layout({ children }) {
       {!bare && <Footer />}
       {!bare && <WhatsAppFloat />}
       <CartDrawer />
+      <CookieConsent />
       <Toast />
     </>
   );

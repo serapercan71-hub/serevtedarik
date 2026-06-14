@@ -4155,3 +4155,112 @@ a.price-locked:hover {
     text-align: center;
   }
 }
+
+/* ============================================================
+   STATİK BİLGİ SAYFALARI (Hakkımızda, KVKK, İade vb.)
+   ============================================================ */
+.static-page {
+  max-width: 820px;
+  padding-top: 50px;
+  padding-bottom: 80px;
+}
+.static-title {
+  font-size: 34px;
+  color: var(--navy-dark);
+  font-weight: 800;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+.static-intro {
+  font-size: 17px;
+  color: var(--teal);
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+.static-section {
+  margin-bottom: 26px;
+}
+.static-h2 {
+  font-size: 19px;
+  color: var(--navy-dark);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.static-section p {
+  font-size: 15.5px;
+  color: var(--navy);
+  line-height: 1.8;
+}
+.static-page a {
+  color: var(--teal);
+  font-weight: 600;
+  text-decoration: underline;
+}
+@media (max-width: 560px) {
+  .static-page {
+    padding-top: 30px;
+    padding-bottom: 60px;
+  }
+  .static-title {
+    font-size: 26px;
+  }
+  .static-intro {
+    font-size: 15px;
+  }
+}
+
+/* ============================================================
+   ÇEREZ / KVKK BİLGİLENDİRME ŞERİDİ
+   ============================================================ */
+.cookie-bar {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1200;
+  background: var(--navy-dark, #1a2634);
+  color: #fff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  max-width: 760px;
+  margin: 0 auto;
+}
+.cookie-text {
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+.cookie-text a {
+  color: var(--sky-blue, #c8d9e6);
+  text-decoration: underline;
+}
+.cookie-btn {
+  flex-shrink: 0;
+  background: var(--gradient-teal, #567c8d);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--fast-trans);
+}
+.cookie-btn:hover {
+  filter: brightness(1.1);
+}
+@media (max-width: 560px) {
+  .cookie-bar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 10px;
+    bottom: 12px;
+    padding: 14px 16px;
+  }
+}

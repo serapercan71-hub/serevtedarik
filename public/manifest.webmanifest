@@ -1,0 +1,17 @@
+{
+  "name": "Serap Ercan",
+  "short_name": "Serap Ercan",
+  "description": "Ev ve mutfak gereçlerinde kaliteli, orijinal ürünler.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5efe6",
+  "theme_color": "#2f4156",
+  "icons": [
+    {
+      "src": "/img/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
