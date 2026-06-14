@@ -3336,6 +3336,16 @@ button:active:not(:disabled),
 
 /* === RESPONSIVE === */
 @media (max-width: 900px) {
+  /* Yatay kategori menüsü mobilde gizli — hamburger menü ile erişiliyor.
+     (Bu blok .main-nav temel tanımından sonra geldiği için geçerli olur.) */
+  .main-nav {
+    display: none;
+  }
+  /* Vitrin tek sütun — kolaj gizliyken sağda boş 2. sütun kalmasın.
+     (Temel .hero-inner tanımından sonra geldiği için geçerli olur.) */
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
   .detail-wrapper {
     grid-template-columns: 1fr;
     gap: 30px;
@@ -3990,5 +4000,158 @@ a.price-locked:hover {
   .price-row img,
   .price-row-title {
     grid-column: 1 / -1;
+  }
+}
+
+/* ============================================================
+   TELEFON İYİLEŞTİRMELERİ (sadece mobil — masaüstü etkilenmez)
+   ============================================================ */
+@media (max-width: 560px) {
+  /* Üst şerit ve başlık — daha derli toplu */
+  .top-bar {
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    padding: 7px 12px;
+    line-height: 1.4;
+  }
+  .logo-img {
+    height: 48px;
+  }
+  header.site-header.sticky .logo-img {
+    height: 42px;
+  }
+  .header-icons {
+    gap: 4px;
+  }
+  .header-icons .icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Vitrin (hero) — telefonda dengeli tipografi */
+  .hero {
+    min-height: auto;
+    padding: 40px 0 44px;
+    margin-bottom: 36px;
+  }
+  .hero-content {
+    padding: 0 4px;
+  }
+  .hero-eyebrow {
+    margin-bottom: 16px;
+    font-size: 11px;
+  }
+  .hero h2 {
+    font-size: 32px;
+    margin-bottom: 14px;
+  }
+  .hero-content p {
+    font-size: 15px;
+    max-width: 100%;
+  }
+  .hero-actions {
+    margin-top: 22px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .hero-btn-ghost {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  /* Bölüm başlıkları */
+  .section-title {
+    font-size: 26px;
+    margin-bottom: 34px;
+  }
+
+  /* Ürün ızgarası — telefonda 2 sütun (tek dev kart yerine) */
+  .products-grid,
+  .categories {
+    gap: 14px;
+  }
+  .products-grid {
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 50px;
+  }
+  .product-card {
+    padding: 12px;
+  }
+  .product-img {
+    height: 150px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+  .product-title {
+    font-size: 13.5px;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .product-rating {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .product-price-row {
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .product-price {
+    font-size: 17px;
+  }
+  .product-old-price {
+    font-size: 12px;
+  }
+  .add-to-cart {
+    padding: 11px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  .product-badge {
+    top: 10px;
+    right: 10px;
+    padding: 4px 9px;
+    font-size: 9px;
+  }
+  .fav-btn {
+    top: 10px;
+    left: 10px;
+    width: 32px;
+    height: 32px;
+  }
+
+  /* WhatsApp butonu — telefonda yer kaplamasın, yuvarlak ikon */
+  .whatsapp-float {
+    bottom: 18px;
+    right: 18px;
+    padding: 0;
+    width: 54px;
+    height: 54px;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .whatsapp-float span {
+    display: none;
+  }
+  .whatsapp-float svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Footer — telefonda ortalı ve ferah */
+  .footer {
+    padding: 50px 20px 24px;
+  }
+  .footer-grid {
+    gap: 32px;
+    padding-bottom: 32px;
+  }
+  .footer-bottom {
+    justify-content: center;
+    text-align: center;
   }
 }
