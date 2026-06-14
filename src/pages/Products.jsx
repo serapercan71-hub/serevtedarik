@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';
-import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { useCatalog } from '../context/CatalogContext.jsx';
 
@@ -62,8 +59,6 @@ export default function Products() {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
-      <Header />
-
       <div className="container">
         <div className="catalog-head">
           <h1 className="catalog-title">
@@ -152,9 +147,6 @@ export default function Products() {
           </div>
         )}
       </div>
-
-      <Footer />
-      <WhatsAppFloat />
     </motion.div>
   );
 }

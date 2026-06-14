@@ -1,7 +1,5 @@
 import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { formatPrice } from '../context/CartContext.jsx';
 import { TIERS } from '../data/store.js';
@@ -46,7 +44,6 @@ export default function Account() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Header />
       <div className="container account-page">
         <div className="account-head">
           <h1>Merhaba, {user.fullName}</h1>
@@ -122,7 +119,6 @@ export default function Account() {
           </div>
         </div>
       </div>
-      <Footer />
     </motion.div>
   );
 }

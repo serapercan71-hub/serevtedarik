@@ -216,6 +216,9 @@ export default function Header() {
               <nav className="mobile-nav">
                 <button onClick={() => go('/')}>Ana Sayfa</button>
                 <button onClick={() => go('/urunler')}>Tüm Ürünler</button>
+                <button onClick={() => go('/urunler?kategori=Ev%20%26%20Ya%C5%9Fam')}>
+                  Ev & Yaşam
+                </button>
                 <button onClick={() => go('/urunler?kategori=Mutfak%20Gere%C3%A7leri')}>
                   Mutfak Gereçleri
                 </button>

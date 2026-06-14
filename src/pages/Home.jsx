@@ -1,8 +1,5 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';
-import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import Stars from '../components/Stars.jsx';
 import Thumb from '../components/Thumb.jsx';
@@ -62,8 +59,6 @@ export default function Home() {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
-      <Header />
-
       {/* HERO — sol metin, sağ yüzen ürün kolajı */}
       <section className="hero">
         <div className="container hero-inner">
@@ -221,9 +216,6 @@ export default function Home() {
           hızlı, en güvenli ve en uygun fiyatlarla ulaşmanızı sağlamaktayız.
         </p>
       </motion.section>
-
-      <Footer />
-      <WhatsAppFloat />
     </motion.div>
   );
 }

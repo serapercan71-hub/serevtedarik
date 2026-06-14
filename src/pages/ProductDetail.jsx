@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';
-import WhatsAppFloat from '../components/WhatsAppFloat.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import Stars from '../components/Stars.jsx';
 import Price from '../components/Price.jsx';
@@ -47,8 +44,6 @@ export default function ProductDetail() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Header />
-
       <div className="container">
         {/* Breadcrumb */}
         <nav className="breadcrumb">
@@ -183,9 +178,6 @@ export default function ProductDetail() {
           </>
         )}
       </div>
-
-      <Footer />
-      <WhatsAppFloat />
     </motion.div>
   );
 }
