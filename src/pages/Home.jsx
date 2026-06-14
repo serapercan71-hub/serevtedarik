@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard.jsx';
-import Stars from '../components/Stars.jsx';
 import Thumb from '../components/Thumb.jsx';
 import {
   IconBadgeCheck,
@@ -24,28 +23,6 @@ const heroCards = [
   { cls: 'hc-1', delay: 0 },
   { cls: 'hc-2', delay: 0.8 },
   { cls: 'hc-3', delay: 1.6 },
-];
-
-// Örnek müşteri yorumları — gerçek yorumlar gelince değiştirilecek
-const testimonials = [
-  {
-    name: 'Elif K.',
-    place: 'Kadıköy / İstanbul',
-    rating: 5,
-    text: 'Sipariş verdim, aynı gün WhatsApp üzerinden dönüş yaptılar. Ürünler orijinal ve paketleme çok özenliydi.',
-  },
-  {
-    name: 'Murat A.',
-    place: 'Çankaya / Ankara',
-    rating: 5,
-    text: 'Mağazam için toptan alıyorum. Temsilci fiyatları gerçekten avantajlı, tedarik hızı da çok iyi.',
-  },
-  {
-    name: 'Zeynep T.',
-    place: 'Bornova / İzmir',
-    rating: 4.5,
-    text: 'Solingen setini aldım, kalitesi beklediğimin üstünde çıktı. İletişimleri çok hızlı, tavsiye ederim.',
-  },
 ];
 
 export default function Home() {
@@ -147,64 +124,52 @@ export default function Home() {
       </motion.section>
 
       <div className="container">
-        {/* KATEGORİLER — görselli */}
-        <motion.h2 className="section-title" {...fadeUp}>
-          Ayrıcalıklı Kategoriler
-        </motion.h2>
-        <div className="categories">
-          {categories.map((cat) => (
-            <motion.div
-              key={cat}
-              className="category-card cat-visual"
-              {...fadeUp}
-              whileHover={{ y: -8 }}
-              onClick={() =>
-                navigate(`/urunler?kategori=${encodeURIComponent(cat)}`)
-              }
-            >
-              <div className="cat-img-wrap">
-                <Thumb src="" alt={cat} className="cat-img" />
-              </div>
-              <h3>{cat}</h3>
-              <span className="cat-link">Keşfet →</span>
-            </motion.div>
-          ))}
-        </div>
+        {/* KATEGORİLER — yalnızca kategori eklendiyse göster */}
+        {categories.length > 0 && (
+          <>
+            <motion.h2 className="section-title" {...fadeUp}>
+              Ayrıcalıklı Kategoriler
+            </motion.h2>
+            <div className="categories">
+              {categories.map((cat) => (
+                <motion.div
+                  key={cat}
+                  className="category-card cat-visual"
+                  {...fadeUp}
+                  whileHover={{ y: -8 }}
+                  onClick={() =>
+                    navigate(`/urunler?kategori=${encodeURIComponent(cat)}`)
+                  }
+                >
+                  <div className="cat-img-wrap">
+                    <Thumb src="" alt={cat} className="cat-img" />
+                  </div>
+                  <h3>{cat}</h3>
+                  <span className="cat-link">Keşfet →</span>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        )}
 
-        {/* ÜRÜNLER */}
-        <motion.h2 id="products" className="section-title" {...fadeUp}>
-          Haftanın Seçkileri
-        </motion.h2>
-        <div className="products-grid">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-        <div style={{ textAlign: 'center', marginBottom: 80 }}>
-          <button className="hero-btn" onClick={() => navigate('/urunler')}>
-            Tüm Ürünleri Gör
-          </button>
-        </div>
-
-        {/* MÜŞTERİ YORUMLARI */}
-        <motion.h2 className="section-title" {...fadeUp}>
-          Müşterilerimiz Ne Diyor?
-        </motion.h2>
-        <div className="testimonials">
-          {testimonials.map((t) => (
-            <motion.div className="testimonial-card" key={t.name} {...fadeUp}>
-              <Stars value={t.rating} />
-              <p className="testimonial-text">“{t.text}”</p>
-              <div className="testimonial-author">
-                <span className="t-avatar">{t.name.charAt(0)}</span>
-                <div>
-                  <strong>{t.name}</strong>
-                  <span>{t.place}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        {/* ÜRÜNLER — yalnızca ürün eklendiyse göster */}
+        {products.length > 0 && (
+          <>
+            <motion.h2 id="products" className="section-title" {...fadeUp}>
+              Öne Çıkan Ürünler
+            </motion.h2>
+            <div className="products-grid">
+              {products.slice(0, 8).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginBottom: 80 }}>
+              <button className="hero-btn" onClick={() => navigate('/urunler')}>
+                Tüm Ürünleri Gör
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* HAKKIMIZDA */}

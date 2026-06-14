@@ -19,6 +19,7 @@ export default function Products() {
   const query = params.get('q') || '';
   const category = params.get('kategori') || 'Tümü';
   const sort = params.get('sirala') || 'default';
+  const filter = params.get('filter') || ''; // kampanya | cok-satan
 
   // Tek bir parametreyi güncelle, diğerlerini koru
   const setParam = (key, value) => {
@@ -44,13 +45,22 @@ export default function Products() {
       list = list.filter((p) => p.category === category);
     }
 
+    // Menü filtreleri
+    if (filter === 'kampanya') {
+      list = list.filter(
+        (p) => p.badgeType === 'discount' || p.badge === 'İndirim'
+      );
+    } else if (filter === 'cok-satan') {
+      list.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+    }
+
     if (sort === 'price-asc') list.sort((a, b) => a.price - b.price);
     else if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
     else if (sort === 'rating')
       list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
     return list;
-  }, [products, query, category, sort]);
+  }, [products, query, category, sort, filter]);
 
   return (
     <motion.div
@@ -64,6 +74,10 @@ export default function Products() {
           <h1 className="catalog-title">
             {query
               ? `"${query}" için sonuçlar`
+              : filter === 'kampanya'
+              ? 'Kampanyalı Ürünler'
+              : filter === 'cok-satan'
+              ? 'Çok Satanlar'
               : category !== 'Tümü'
               ? category
               : 'Tüm Ürünler'}
@@ -132,18 +146,30 @@ export default function Products() {
           </motion.div>
         ) : (
           <div className="no-results">
-            <div className="no-results-icon">🔍</div>
-            <h3>Sonuç bulunamadı</h3>
-            <p>
-              "{query}" aramanıza uygun ürün yok. Farklı bir kelime deneyin veya
-              filtreleri temizleyin.
-            </p>
-            <button
-              className="hero-btn"
-              onClick={() => setParams({}, { replace: true })}
-            >
-              Filtreleri Temizle
-            </button>
+            <div className="no-results-icon">{products.length === 0 ? '🛍️' : '🔍'}</div>
+            {products.length === 0 ? (
+              <>
+                <h3>Henüz ürün eklenmedi</h3>
+                <p>
+                  Ürünler en kısa sürede eklenecek. Sorularınız için bize
+                  WhatsApp'tan ulaşabilirsiniz.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3>Sonuç bulunamadı</h3>
+                <p>
+                  Aramanıza uygun ürün yok. Farklı bir kelime deneyin veya
+                  filtreleri temizleyin.
+                </p>
+                <button
+                  className="hero-btn"
+                  onClick={() => setParams({}, { replace: true })}
+                >
+                  Filtreleri Temizle
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>

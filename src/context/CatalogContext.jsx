@@ -5,8 +5,10 @@ import {
 } from '../data/products.js';
 
 const CatalogContext = createContext(null);
-const P_KEY = 'serapercan_catalog_products';
-const C_KEY = 'serapercan_catalog_categories';
+// v2: yayına geçişte demo veriler kaldırıldı; eski önbelleği yok saymak için
+// anahtar adı değiştirildi (eski demo ürünler tarayıcıda kalmasın).
+const P_KEY = 'serev_catalog_products_v2';
+const C_KEY = 'serev_catalog_categories_v2';
 
 function load(key, fallback) {
   try {

@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 import { useSettings } from '../context/SettingsContext.jsx';
+import { useCatalog } from '../context/CatalogContext.jsx';
 import {
   IconInstagram,
   IconHeart,
@@ -23,18 +24,22 @@ export default function Header() {
   const { user, isAdmin, isMember } = useAuth();
   const { count: favCount } = useFavorites();
   const { settings } = useSettings();
+  const { categories } = useCatalog();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
   const pending = isMember && user.status === 'pending';
 
-  // Aktif kategori: /urunler sayfasındaki ?kategori= parametresine göre.
-  // (Üç link de aynı sayfaya gittiği için NavLink hepsini aktif sayıyordu.)
-  const activeCat = new URLSearchParams(location.search).get('kategori');
+  // Aktif menü vurgusu: /urunler'deki ?kategori= ve ?filter= parametrelerine göre.
+  const sp = new URLSearchParams(location.search);
+  const activeCat = sp.get('kategori');
+  const activeFilter = sp.get('filter');
   const onProducts = location.pathname === '/urunler';
   const catClass = (cat) =>
     onProducts && activeCat === cat ? 'active' : undefined;
+  const filterClass = (f) =>
+    onProducts && activeFilter === f ? 'active' : undefined;
 
   useEffect(() => {
     const onScroll = () => setSticky(window.scrollY > 30);
@@ -155,21 +160,30 @@ export default function Header() {
         </NavLink>
         <Link
           to="/urunler"
-          className={onProducts && !activeCat ? 'active' : undefined}
+          className={onProducts && !activeCat && !activeFilter ? 'active' : undefined}
         >
           Tüm Ürünler
         </Link>
-        <Link
-          to="/urunler?kategori=Ev%20%26%20Ya%C5%9Fam"
-          className={catClass('Ev & Yaşam')}
-        >
-          Ev & Yaşam
+        <Link to="/urunler?filter=kampanya" className={filterClass('kampanya')}>
+          Kampanyalar
         </Link>
+        <Link to="/urunler?filter=cok-satan" className={filterClass('cok-satan')}>
+          Çok Satanlar
+        </Link>
+        {categories.map((cat) => (
+          <Link
+            key={cat}
+            to={`/urunler?kategori=${encodeURIComponent(cat)}`}
+            className={catClass(cat)}
+          >
+            {cat}
+          </Link>
+        ))}
         <Link
-          to="/urunler?kategori=Mutfak%20Gere%C3%A7leri"
-          className={catClass('Mutfak Gereçleri')}
+          to="/sayfa/iletisim"
+          className={location.pathname === '/sayfa/iletisim' ? 'active' : undefined}
         >
-          Mutfak Gereçleri
+          İletişim
         </Link>
       </nav>
 
@@ -216,12 +230,21 @@ export default function Header() {
               <nav className="mobile-nav">
                 <button onClick={() => go('/')}>Ana Sayfa</button>
                 <button onClick={() => go('/urunler')}>Tüm Ürünler</button>
-                <button onClick={() => go('/urunler?kategori=Ev%20%26%20Ya%C5%9Fam')}>
-                  Ev & Yaşam
+                <button onClick={() => go('/urunler?filter=kampanya')}>
+                  Kampanyalar
                 </button>
-                <button onClick={() => go('/urunler?kategori=Mutfak%20Gere%C3%A7leri')}>
-                  Mutfak Gereçleri
+                <button onClick={() => go('/urunler?filter=cok-satan')}>
+                  Çok Satanlar
                 </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => go(`/urunler?kategori=${encodeURIComponent(cat)}`)}
+                  >
+                    {cat}
+                  </button>
+                ))}
+                <button onClick={() => go('/sayfa/iletisim')}>İletişim</button>
                 <button onClick={() => go('/favorilerim')}>
                   Favorilerim {favCount > 0 ? `(${favCount})` : ''}
                 </button>
