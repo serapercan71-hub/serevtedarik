@@ -2036,6 +2036,9 @@ button:active:not(:disabled),
   position: relative;
   transition: var(--fast-trans);
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .product-card:hover {
   border-color: rgba(86, 124, 141, 0.2);
@@ -2087,6 +2090,11 @@ button:active:not(:disabled),
   font-weight: 600;
   color: var(--navy-dark);
   transition: var(--fast-trans);
+  line-height: 1.3;
+  min-height: 2.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .product-link:hover .product-title {
   color: var(--teal);
@@ -2139,6 +2147,7 @@ button:active:not(:disabled),
 .add-to-cart {
   width: 100%;
   padding: 14px;
+  margin-top: auto;
   background: var(--gradient-teal);
   color: white;
   border: none;
