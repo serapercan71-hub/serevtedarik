@@ -77,7 +77,7 @@ export default function Header() {
           </button>
 
           <Link to="/" className="logo">
-            <img src="/img/logo.svg" alt="Serev Tedarik" className="logo-img" />
+            <img src="/img/logo.png" alt="Serev Tedarik" className="logo-img" />
           </Link>
 
           <form className="search-bar" onSubmit={handleSearch}>
@@ -193,7 +193,7 @@ export default function Header() {
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             >
               <div className="mobile-drawer-head">
-                <img src="/img/logo.svg" alt="Serev Tedarik" className="logo-img" />
+                <img src="/img/logo.png" alt="Serev Tedarik" className="logo-img" />
                 <button
                   className="icon-btn"
                   onClick={() => setMenuOpen(false)}

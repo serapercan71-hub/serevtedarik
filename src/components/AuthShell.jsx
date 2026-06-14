@@ -10,7 +10,7 @@ export default function AuthShell({ children }) {
             <span>←</span> Ana Sayfa
           </Link>
           <Link to="/" className="logo">
-            <img src="/img/logo.svg" alt="Serev Tedarik" className="logo-img" />
+            <img src="/img/logo.png" alt="Serev Tedarik" className="logo-img" />
           </Link>
         </div>
       </header>
