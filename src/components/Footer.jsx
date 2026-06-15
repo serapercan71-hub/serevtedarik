@@ -9,8 +9,11 @@ export default function Footer() {
       <div className="footer-grid">
         <div className="footer-col">
           <h4>İletişim Bilgileri</h4>
+          <p>
+            Telefon / WhatsApp:{' '}
+            <a href="tel:+905448641810">0544 864 18 10</a>
+          </p>
           <p>E-Posta: {settings.contactEmail}</p>
-          <p>Sipariş & İletişim: WhatsApp</p>
           <p>Çalışma Saatleri: 09:00 - 18:00</p>
         </div>
         <div className="footer-col">
@@ -50,7 +53,16 @@ export default function Footer() {
       </div>
       <div className="footer-bottom">
         <span>© {year} {settings.storeName || 'Serev Tedarik'}. Tüm hakları saklıdır.</span>
-        <span>Toptan & perakende tedarik</span>
+        <span className="footer-credit">
+          Tasarım:{' '}
+          <a
+            href="https://www.bariscreativedesign.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            BarışCreativeDesign
+          </a>
+        </span>
       </div>
     </footer>
   );

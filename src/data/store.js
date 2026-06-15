@@ -4,7 +4,7 @@
 
 // Satıcının WhatsApp numarası (başında ülke kodu, boşluk/sembol YOK).
 // Örn: Türkiye için 90 ile başlar -> '905551112233'
-export const SELLER_WHATSAPP = '905550000000'; // <-- DEĞİŞTİR
+export const SELLER_WHATSAPP = '905448641810'; // 0544 864 18 10
 
 export const STORE_NAME = 'Serev Tedarik';
 

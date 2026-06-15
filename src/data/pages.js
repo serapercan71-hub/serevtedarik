@@ -27,7 +27,7 @@ export const STATIC_PAGES = {
     sections: [
       { h: 'Firma Ünvanı', p: '〔Resmi firma ünvanı〕' },
       { h: 'Adres', p: '〔Açık adres, ilçe / il〕' },
-      { h: 'Telefon / WhatsApp', p: '〔05XX XXX XX XX〕' },
+      { h: 'Telefon / WhatsApp', p: '0544 864 18 10' },
       { h: 'E-Posta', p: '〔info@firmaadi.com〕' },
       { h: 'Vergi Dairesi / No', p: '〔Vergi dairesi ve numarası〕' },
       { h: 'Çalışma Saatleri', p: 'Hafta içi 09:00 – 18:00' },
@@ -48,12 +48,28 @@ export const STATIC_PAGES = {
         p: 'Üyelik başvurusunda verdiğiniz ad-soyad, firma bilgisi, e-posta, telefon ve sipariş bilgileri; siparişin oluşturulması ve iletişim amacıyla işlenir.',
       },
       {
+        h: 'İşleme Amaçları',
+        p: 'Verileriniz; üyelik başvurunuzun değerlendirilmesi, siparişlerin oluşturulması ve takibi, sizinle iletişim kurulması ve yasal yükümlülüklerin yerine getirilmesi amaçlarıyla işlenir.',
+      },
+      {
         h: 'Verilerin Aktarılması',
         p: 'Verileriniz yasal yükümlülükler dışında üçüncü kişilerle paylaşılmaz. 〔Kargo/ödeme gibi hizmet aldığınız taraflar varsa belirtin.〕',
       },
       {
+        h: 'Saklama Süresi',
+        p: 'Kişisel verileriniz, işlenme amacının gerektirdiği süre ve ilgili mevzuatta öngörülen süreler boyunca saklanır; sürenin sonunda silinir, yok edilir veya anonim hâle getirilir.',
+      },
+      {
+        h: 'Çerez (Cookie) Politikası',
+        p: 'Sitemiz; oturumunuzun sürdürülmesi, sepet/üyelik tercihlerinizin hatırlanması ve deneyimin iyileştirilmesi için zorunlu ve işlevsel çerezler kullanır. Çerezleri tarayıcı ayarlarınızdan reddedebilir veya silebilirsiniz; ancak bu durumda bazı özellikler düzgün çalışmayabilir. Pazarlama amaçlı üçüncü taraf çerezleri 〔kullanılıyorsa belirtin; kullanılmıyorsa "kullanılmamaktadır"〕.',
+      },
+      {
+        h: 'Veri Güvenliği',
+        p: 'Siteye iletilen veriler SSL/TLS şifrelemesi ile aktarılır. Üyelik şifreleri geri döndürülemez şekilde şifrelenerek (hash) saklanır; düz metin olarak tutulmaz. Yetkisiz erişime karşı teknik ve idari tedbirler alınır.',
+      },
+      {
         h: 'Haklarınız',
-        p: 'KVKK 11. madde kapsamında verilerinize erişme, düzeltme ve silinmesini talep etme haklarına sahipsiniz. Talepleriniz için: 〔iletişim e-postası〕',
+        p: 'KVKK 11. madde kapsamında verilerinize erişme, düzeltme, silinmesini talep etme ve işlemeye itiraz etme haklarına sahipsiniz. Talepleriniz için: 0544 864 18 10 / 〔iletişim e-postası〕',
       },
     ],
   },
@@ -73,7 +89,7 @@ export const STATIC_PAGES = {
       },
       {
         h: 'İade Süreci',
-        p: 'İade talebinizi 〔iletişim kanalı〕 üzerinden iletin; onay sonrası ürünü 〔iade adresi〕 adresine gönderin.',
+        p: 'İade talebinizi WhatsApp (0544 864 18 10) üzerinden iletin; onay sonrası ürünü 〔iade adresi〕 adresine gönderin.',
       },
     ],
   },

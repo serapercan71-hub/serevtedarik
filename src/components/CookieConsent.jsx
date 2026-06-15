@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const KEY = 'serapercan_cookie_consent';
 
 // KVKK / çerez bilgilendirme şeridi. Kullanıcı kabul edince bir daha çıkmaz.
 export default function CookieConsent() {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
+  // Başlangıç durumunu localStorage'dan oku (effect içinde setState yok)
+  const [show, setShow] = useState(() => {
     try {
-      if (!localStorage.getItem(KEY)) setShow(true);
+      return !localStorage.getItem(KEY);
     } catch {
-      /* localStorage yoksa sessiz geç */
+      return false;
     }
-  }, []);
+  });
 
   const accept = () => {
     try {

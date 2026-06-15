@@ -2471,6 +2471,26 @@ button:active:not(:disabled),
   font-size: 13px;
   color: rgba(200, 217, 230, 0.6);
 }
+/* İletişim telefonu linki */
+.footer-col p a {
+  color: var(--sky-blue);
+  text-decoration: none;
+  transition: var(--fast-trans);
+}
+.footer-col p a:hover {
+  color: var(--white);
+}
+/* Tasarımcı imzası (sağ alt) */
+.footer-credit a {
+  color: var(--white);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--fast-trans);
+}
+.footer-credit a:hover {
+  color: var(--sky-blue);
+  text-decoration: underline;
+}
 
 /* === WHATSAPP === */
 .whatsapp-float {
