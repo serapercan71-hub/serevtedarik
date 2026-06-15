@@ -38,10 +38,10 @@ export default function Register() {
     return Object.keys(er).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    const res = register(form);
+    const res = await register(form);
     if (!res.ok) {
       const field = /telefon/i.test(res.error) ? 'phone' : 'email';
       setErrors({ [field]: res.error });

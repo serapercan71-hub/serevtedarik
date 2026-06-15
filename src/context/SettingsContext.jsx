@@ -9,7 +9,6 @@ const defaults = {
   storeName: STORE_NAME,
   topBar: 'Toptan & perakende tedarik · Üye girişi yaparak özel fiyatlarınızı görün',
   contactEmail: ADMIN.email,
-  adminPassword: ADMIN.password,
 };
 
 function load() {

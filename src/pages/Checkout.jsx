@@ -86,7 +86,7 @@ export default function Checkout() {
     window.open(`https://wa.me/${settings.whatsapp}?text=${text}`, '_blank');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
       showToast('Lütfen eksik alanları doldurun');
@@ -100,9 +100,9 @@ export default function Checkout() {
       total: totalAmount,
       name: `${form.firstName} ${form.lastName}`,
     });
-    // Üyenin sipariş geçmişine kaydet
+    // Üyenin sipariş geçmişine kaydet (veritabanına)
     if (user) {
-      addOrder({
+      await addOrder({
         code,
         userId: user.id,
         items: items.map((i) => ({

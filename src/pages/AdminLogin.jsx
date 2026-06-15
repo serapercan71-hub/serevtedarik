@@ -6,16 +6,24 @@ import { useAuth } from '../context/AuthContext.jsx';
 
 // Yöneticiye özel ayrı giriş alanı (müşteri girişinden bağımsız).
 export default function AdminLogin() {
-  const { adminLogin } = useAuth();
+  const { login, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const res = adminLogin(email, password);
-    if (!res.ok) setError(res.error);
+    const res = await login(email, password);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    if (!res.isAdmin) {
+      await logout();
+      setError('Bu hesap yönetici yetkisine sahip değil.');
+      return;
+    }
     // Başarılıysa oturum güncellenir, /admin paneli otomatik açılır.
   };
 

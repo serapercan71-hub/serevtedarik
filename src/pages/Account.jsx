@@ -23,17 +23,18 @@ const statusInfo = {
 };
 
 export default function Account() {
-  const { user, isAdmin, logout, getUserOrders } = useAuth();
+  const { user, isAdmin, logout, getUserOrders, loading } = useAuth();
   const navigate = useNavigate();
 
+  if (loading) return null; // oturum yükleniyor — yönlendirmeden önce bekle
   if (isAdmin) return <Navigate to="/admin" replace />;
   if (!user) return <Navigate to="/giris" replace />;
 
   const info = statusInfo[user.status] || statusInfo.pending;
   const orders = getUserOrders(user.id);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

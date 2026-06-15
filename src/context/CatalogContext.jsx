@@ -1,89 +1,133 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
-  products as seedProducts,
-  categories as seedCategories,
-} from '../data/products.js';
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
+import { useAuth } from './AuthContext.jsx';
 
 const CatalogContext = createContext(null);
-// v2: yayına geçişte demo veriler kaldırıldı; eski önbelleği yok saymak için
-// anahtar adı değiştirildi (eski demo ürünler tarayıcıda kalmasın).
-const P_KEY = 'serev_catalog_products_v2';
-const C_KEY = 'serev_catalog_categories_v2';
+// Admin'in önceden eklediği (henüz ürünü olmayan) kategori adları.
+const XCAT_KEY = 'serev_extra_categories';
 
-function load(key, fallback) {
+function loadExtra() {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    const raw = localStorage.getItem(XCAT_KEY);
+    return raw ? JSON.parse(raw) : [];
   } catch {
-    return fallback;
+    return [];
+  }
+}
+
+async function api(path, options = {}) {
+  try {
+    const res = await fetch(`/api${path}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    });
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      data = {};
+    }
+    return { ok: res.ok, status: res.status, data };
+  } catch {
+    return { ok: false, status: 0, data: {} };
   }
 }
 
 export function CatalogProvider({ children }) {
-  const [products, setProducts] = useState(() => load(P_KEY, seedProducts));
-  const [categories, setCategories] = useState(() =>
-    load(C_KEY, seedCategories.map((c) => c.name))
+  // Fiyatlar kullanıcının yetkisine göre şekillendiği için, kullanıcı
+  // değiştiğinde ürünleri yeniden çekiyoruz.
+  const { user } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [extraCats, setExtraCats] = useState(loadExtra);
+
+  const refresh = useCallback(async () => {
+    const { ok, data } = await api('/products');
+    if (ok) setProducts(data.products || []);
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh, user?.id, user?.status, user?.tier, user?.isAdmin]);
+
+  useEffect(() => {
+    localStorage.setItem(XCAT_KEY, JSON.stringify(extraCats));
+  }, [extraCats]);
+
+  // Kategoriler: ürünlerden türetilen + admin'in eklediği ekstra adlar
+  const categories = useMemo(() => {
+    const derived = products.map((p) => p.category).filter(Boolean);
+    return [...new Set([...derived, ...extraCats])].sort((a, b) =>
+      a.localeCompare(b, 'tr')
+    );
+  }, [products, extraCats]);
+
+  // --- ÜRÜNLER (API) ---
+  const addProduct = useCallback(
+    async (data) => {
+      const { ok } = await api('/products', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: data.title,
+          desc: data.desc,
+          img: data.img,
+          category: data.category,
+          badge: data.badge,
+          pricePerakende: data.price,
+          priceTemsilci: data.priceTemsilci,
+          inStock: data.inStock,
+          rating: data.rating,
+          reviewCount: data.reviewCount,
+        }),
+      });
+      if (ok) await refresh();
+      return ok;
+    },
+    [refresh]
   );
 
-  useEffect(() => {
-    localStorage.setItem(P_KEY, JSON.stringify(products));
-  }, [products]);
-  useEffect(() => {
-    localStorage.setItem(C_KEY, JSON.stringify(categories));
-  }, [categories]);
-
-  // --- ÜRÜNLER ---
-  const addProduct = useCallback((data) => {
-    setProducts((prev) => {
-      const id = prev.length ? Math.max(...prev.map((p) => p.id)) + 1 : 1;
-      return [
-        ...prev,
-        {
+  const updateProduct = useCallback(
+    async (id, data) => {
+      const { ok } = await api('/products', {
+        method: 'PUT',
+        body: JSON.stringify({
           id,
-          title: data.title || 'Yeni Ürün',
-          desc: data.desc || '',
-          img: data.img || '',
-          category: data.category || '',
-          badge: data.badge || '',
-          price: Number(data.price) || 0,
-          priceTemsilci: Number(data.priceTemsilci) || 0,
-          inStock: data.inStock !== false,
-          rating: Number(data.rating) || 0,
-          reviewCount: Number(data.reviewCount) || 0,
-          features: data.features || [],
-        },
-      ];
-    });
-  }, []);
+          title: data.title,
+          desc: data.desc,
+          img: data.img,
+          category: data.category,
+          badge: data.badge,
+          pricePerakende: data.price,
+          priceTemsilci: data.priceTemsilci,
+          inStock: data.inStock,
+        }),
+      });
+      if (ok) await refresh();
+      return ok;
+    },
+    [refresh]
+  );
 
-  const updateProduct = useCallback((id, data) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? {
-              ...p,
-              ...data,
-              price: data.price !== undefined ? Number(data.price) : p.price,
-              priceTemsilci:
-                data.priceTemsilci !== undefined
-                  ? Number(data.priceTemsilci)
-                  : p.priceTemsilci,
-            }
-          : p
-      )
-    );
-  }, []);
+  const deleteProduct = useCallback(
+    async (id) => {
+      const { ok } = await api(`/products?id=${id}`, { method: 'DELETE' });
+      if (ok) await refresh();
+      return ok;
+    },
+    [refresh]
+  );
 
-  const deleteProduct = useCallback((id) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-  }, []);
-
-  // --- KATEGORİLER ---
+  // --- KATEGORİLER (yerel ad listesi; ürünlerden türetilenle birleşir) ---
   const addCategory = useCallback((name) => {
     const n = (name || '').trim();
     if (!n) return false;
     let added = false;
-    setCategories((prev) => {
+    setExtraCats((prev) => {
       if (prev.some((c) => c.toLocaleLowerCase('tr') === n.toLocaleLowerCase('tr')))
         return prev;
       added = true;
@@ -93,7 +137,7 @@ export function CatalogProvider({ children }) {
   }, []);
 
   const deleteCategory = useCallback((name) => {
-    setCategories((prev) => prev.filter((c) => c !== name));
+    setExtraCats((prev) => prev.filter((c) => c !== name));
   }, []);
 
   // --- YARDIMCILAR ---
@@ -120,6 +164,7 @@ export function CatalogProvider({ children }) {
   const value = {
     products,
     categories,
+    refresh,
     addProduct,
     updateProduct,
     deleteProduct,

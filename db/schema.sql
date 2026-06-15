@@ -16,6 +16,7 @@ create table if not exists users (
   requested_type varchar(32) default 'perakende',   -- üyenin talep ettiği tip
   status         varchar(16) default 'pending',     -- pending | approved | rejected
   tier           varchar(16),                       -- perakende | temsilci (admin atar)
+  note           text,                              -- yöneticinin üyeye özel notu
   is_admin       boolean default false,
   created_at     timestamp default current_timestamp
 ) engine=InnoDB default charset=utf8mb4;

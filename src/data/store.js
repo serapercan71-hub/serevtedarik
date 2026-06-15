@@ -9,11 +9,12 @@ export const SELLER_WHATSAPP = '905448641810'; // 0544 864 18 10
 export const STORE_NAME = 'Serev Tedarik';
 
 // ============================================================
-//  ADMIN GİRİŞ BİLGİLERİ (şimdilik sabit — sonra değiştirilebilir)
+//  ADMIN — yalnızca iletişim e-postası varsayılanı için.
+//  Gerçek yönetici girişi veritabanı üzerinden (is_admin) yapılır;
+//  sabit şifre YOKTUR.
 // ============================================================
 export const ADMIN = {
   email: 'serapercan71@gmail.com',
-  password: 'admin123',
 };
 
 // Fiyat seviyeleri (üye tipleri)

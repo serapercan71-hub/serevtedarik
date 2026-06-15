@@ -5,7 +5,9 @@ import { useAuth } from '../context/AuthContext.jsx';
 // - admin: yalnızca admin girebilir
 // - onaysız üye / misafir: girişe ya da hesabım'a yönlendirilir
 export default function ProtectedRoute({ children, admin = false }) {
-  const { user, isAdmin, isApproved } = useAuth();
+  const { user, isAdmin, isApproved, loading } = useAuth();
+
+  if (loading) return null; // oturum yükleniyor — yönlendirme yapma
 
   if (admin) {
     return isAdmin ? children : <Navigate to="/giris" replace />;

@@ -119,13 +119,16 @@ export function publicUser(u) {
     requestedType: u.requested_type,
     status: u.status,
     tier: u.tier,
+    note: u.note || '',
     isAdmin: !!u.is_admin, // MySQL 0/1 → boolean
     role: u.is_admin ? 'admin' : 'member',
     createdAt: u.created_at,
   };
 }
 
-// Ürünü, isteyen kullanıcının yetkisine göre fiyatlı/fiyatsız döndür
+// Ürünü, isteyen kullanıcının yetkisine göre fiyatlı/fiyatsız döndür.
+// Admin ve onaylı üye: perakende (price) + temsilci fiyatını görür; gösterim
+// kullanıcının seviyesine göre frontend'de seçilir. Misafir/onaysız: fiyat YOK.
 export function shapeProduct(p, viewer) {
   const base = {
     id: p.id,
@@ -138,22 +141,40 @@ export function shapeProduct(p, viewer) {
     rating: Number(p.rating),
     reviewCount: p.review_count,
   };
-  if (viewer?.isAdmin) {
+  const canSeePrice =
+    viewer?.isAdmin || (viewer?.status === 'approved' && viewer?.tier);
+  if (canSeePrice) {
     return {
       ...base,
-      pricePerakende: Number(p.price_perakende),
+      price: Number(p.price_perakende),
       priceTemsilci: Number(p.price_temsilci),
     };
   }
-  if (viewer?.status === 'approved' && viewer?.tier) {
-    return {
-      ...base,
-      price:
-        viewer.tier === 'temsilci'
-          ? Number(p.price_temsilci)
-          : Number(p.price_perakende),
-    };
-  }
-  // misafir / onaysız: fiyat YOK
   return { ...base, price: null };
+}
+
+// Siparişi frontend'in beklediği camelCase yapıya çevir
+export function shapeOrder(o) {
+  let items = o.items;
+  if (typeof items === 'string') {
+    try {
+      items = JSON.parse(items);
+    } catch {
+      items = [];
+    }
+  }
+  return {
+    id: o.id,
+    code: o.code,
+    userId: o.user_id,
+    items: items || [],
+    total: Number(o.total),
+    status: o.status,
+    customerName: o.customer_name,
+    phone: o.phone,
+    email: o.email,
+    address: o.address,
+    note: o.note,
+    createdAt: o.created_at,
+  };
 }

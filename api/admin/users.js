@@ -26,9 +26,21 @@ export default async function handler(req, res) {
       } else if (action === 'setTier') {
         const t = tier === 'temsilci' ? 'temsilci' : 'perakende';
         await sql`update users set tier = ${t} where id = ${id} and is_admin = false`;
+      } else if (action === 'suspend') {
+        await sql`update users set status = 'suspended' where id = ${id} and is_admin = false`;
+      } else if (action === 'setNote') {
+        await sql`update users set note = ${req.body.note || ''} where id = ${id} and is_admin = false`;
       } else {
         return res.status(400).json({ error: 'Geçersiz işlem.' });
       }
+      return res.json({ ok: true });
+    }
+
+    // ÜYE SİL
+    if (req.method === 'DELETE') {
+      const id = (req.body && req.body.id) || req.query.id;
+      if (!id) return res.status(400).json({ error: 'id gerekli' });
+      await sql`delete from users where id = ${id} and is_admin = false`;
       return res.json({ ok: true });
     }
 

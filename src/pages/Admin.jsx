@@ -36,17 +36,18 @@ function waLink(phone, text = '') {
 }
 
 export default function Admin() {
-  const { isAdmin, logout, users } = useAuth();
+  const { isAdmin, logout, users, loading } = useAuth();
   const { settings } = useSettings();
   const navigate = useNavigate();
   const [tab, setTab] = useState('panel');
 
+  if (loading) return null; // oturum yükleniyor
   if (!isAdmin) return <AdminLogin />;
 
   const pendingCount = users.filter((u) => u.status === 'pending').length;
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
@@ -867,14 +868,6 @@ function SettingsAdmin() {
         <div className="form-group">
           <label>Üst Şerit Yazısı</label>
           <input value={form.topBar} onChange={(e) => set('topBar', e.target.value)} />
-        </div>
-        <div className="form-group">
-          <label>Yönetici Şifresi</label>
-          <input
-            type="text"
-            value={form.adminPassword}
-            onChange={(e) => set('adminPassword', e.target.value)}
-          />
         </div>
         <button className="btn-primary" onClick={save}>
           Ayarları Kaydet

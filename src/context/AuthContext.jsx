@@ -3,171 +3,155 @@ import {
   useContext,
   useState,
   useEffect,
-  useMemo,
   useCallback,
 } from 'react';
-import { ADMIN } from '../data/store.js';
-import { useSettings } from './SettingsContext.jsx';
 
 const AuthContext = createContext(null);
 
-const USERS_KEY = 'serapercan_users';
-const SESSION_KEY = 'serapercan_session';
-const ORDERS_KEY = 'serapercan_orders';
-
-function load(key, fallback) {
+// Tüm API çağrıları için ortak yardımcı. Cookie tabanlı oturum (same-origin)
+// otomatik gider. Ağ hatasında uygulama çökmesin diye try/catch.
+async function api(path, options = {}) {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    const res = await fetch(`/api${path}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    });
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      data = {};
+    }
+    return { ok: res.ok, status: res.status, data };
   } catch {
-    return fallback;
+    return { ok: false, status: 0, data: {} };
   }
 }
 
 export function AuthProvider({ children }) {
-  const { settings } = useSettings();
-  const [users, setUsers] = useState(() => load(USERS_KEY, []));
-  const [session, setSession] = useState(() => load(SESSION_KEY, null));
-  const [orders, setOrders] = useState(() => load(ORDERS_KEY, []));
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]); // admin: tüm üyeler
+  const [orders, setOrders] = useState([]); // admin: tümü / üye: kendi siparişleri
+
+  // ---- OTURUM ----
+  const refreshUser = useCallback(async () => {
+    const { data } = await api('/auth/me');
+    setUser(data.user || null);
+    return data.user || null;
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }, [users]);
-  useEffect(() => {
-    if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    else localStorage.removeItem(SESSION_KEY);
-  }, [session]);
-  useEffect(() => {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-  }, [orders]);
+    refreshUser().finally(() => setLoading(false));
+  }, [refreshUser]);
 
-  const user = useMemo(() => {
-    if (!session) return null;
-    if (session.role === 'admin') {
-      return { role: 'admin', email: ADMIN.email, fullName: 'Yönetici' };
-    }
-    const live = users.find((u) => u.id === session.userId);
-    return live ? { ...live, role: 'member' } : null;
-  }, [session, users]);
-
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.isAdmin === true;
   const isMember = user?.role === 'member';
   const isApproved = isMember && user.status === 'approved';
   const priceTier = isApproved ? user.tier : null;
 
-  // ---- KAYIT ----
-  const register = useCallback(
-    (form) => {
-      const email = form.email.trim().toLowerCase();
-      if (users.some((u) => u.email === email)) {
-        return { ok: false, error: 'Bu e-posta ile zaten bir başvuru var.' };
-      }
-      if (email === ADMIN.email) {
-        return { ok: false, error: 'Bu e-posta kullanılamaz.' };
-      }
+  // ---- ADMIN LİSTELERİ / ÜYE SİPARİŞLERİ ----
+  const refreshUsers = useCallback(async () => {
+    const { ok, data } = await api('/admin/users');
+    if (ok) setUsers(data.users || []);
+  }, []);
+  const refreshOrders = useCallback(async () => {
+    const { ok, data } = await api('/orders');
+    if (ok) setOrders(data.orders || []);
+  }, []);
 
-      // Her üye yalnızca 1 telefon numarasıyla kayıt olabilir (benzersiz).
-      // Numarayı tek biçime getir: rakamları al, baştaki 0'ları ve 90 ülke
-      // kodunu kaldır, çekirdek 10 haneyi "0XXXXXXXXXX" olarak sakla.
-      const canonPhone = (s) => {
-        let d = String(s || '').replace(/\D/g, '').replace(/^0+/, '').replace(/^90/, '');
-        return d.length === 10 ? '0' + d : '';
-      };
-      const phoneCanon = canonPhone(form.phone);
-      if (!phoneCanon) {
-        return { ok: false, error: 'Geçerli bir telefon numarası girin.' };
-      }
-      if (users.some((u) => canonPhone(u.phone) === phoneCanon)) {
-        return {
-          ok: false,
-          error: 'Bu telefon numarası ile zaten bir kayıt var.',
-        };
-      }
-      const newUser = {
-        id: 'u' + Date.now(),
-        companyName: form.companyName.trim(),
-        taxNo: form.taxNo.trim(),
-        fullName: form.fullName.trim(),
-        email,
-        phone: phoneCanon,
+  useEffect(() => {
+    if (isAdmin) {
+      refreshUsers();
+      refreshOrders();
+    } else if (isMember) {
+      refreshOrders();
+      setUsers([]);
+    } else {
+      setUsers([]);
+      setOrders([]);
+    }
+  }, [isAdmin, isMember, user?.id, refreshUsers, refreshOrders]);
+
+  // ---- KAYIT ----
+  const register = useCallback(async (form) => {
+    const { ok, data } = await api('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        companyName: form.companyName,
+        taxNo: form.taxNo,
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone,
         password: form.password,
-        requestedType: form.requestedType || 'perakende',
-        status: 'pending',
-        tier: null,
-        note: '',
-        createdAt: new Date().toISOString(),
-      };
-      setUsers((prev) => [...prev, newUser]);
-      return { ok: true };
-    },
-    [users]
-  );
+        requestedType: form.requestedType,
+      }),
+    });
+    return ok ? { ok: true } : { ok: false, error: data.error || 'Kayıt başarısız.' };
+  }, []);
 
   // ---- ÜYE GİRİŞİ ----
-  const login = useCallback(
-    (email, password) => {
-      const mail = email.trim().toLowerCase();
-      if (mail === ADMIN.email) {
-        return {
-          ok: false,
-          error: 'Bu alan üyelere özeldir. Yönetici girişini kullanın.',
-        };
-      }
-      const found = users.find((u) => u.email === mail);
-      if (!found || found.password !== password) {
-        return { ok: false, error: 'E-posta veya şifre hatalı.' };
-      }
-      if (found.status === 'suspended') {
-        return { ok: false, error: 'Üyeliğiniz askıya alınmış. İletişime geçin.' };
-      }
-      setSession({ role: 'member', userId: found.id });
-      return { ok: true, role: 'member', status: found.status };
-    },
-    [users]
-  );
+  const login = useCallback(async (email, password) => {
+    const { ok, data } = await api('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    if (!ok) return { ok: false, error: data.error || 'Giriş başarısız.' };
+    setUser(data.user);
+    return {
+      ok: true,
+      role: data.user.role,
+      status: data.user.status,
+      isAdmin: data.user.isAdmin,
+    };
+  }, []);
 
-  // ---- YÖNETİCİ GİRİŞİ (şifre ayarlardan, değiştirilebilir) ----
-  const adminLogin = useCallback(
-    (email, password) => {
-      const mail = email.trim().toLowerCase();
-      if (mail === ADMIN.email && password === settings.adminPassword) {
-        setSession({ role: 'admin' });
-        return { ok: true };
-      }
-      return { ok: false, error: 'Yönetici e-posta veya şifresi hatalı.' };
-    },
-    [settings.adminPassword]
-  );
-
-  const logout = useCallback(() => setSession(null), []);
+  const logout = useCallback(async () => {
+    await api('/auth/logout', { method: 'POST' });
+    setUser(null);
+    setUsers([]);
+    setOrders([]);
+  }, []);
 
   // ---- ADMIN: ÜYE İŞLEMLERİ ----
-  const approveUser = useCallback((id, tier) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, status: 'approved', tier } : u))
-    );
-  }, []);
-  const rejectUser = useCallback((id) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, status: 'rejected', tier: null } : u))
-    );
-  }, []);
-  const setUserTier = useCallback((id, tier) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, tier } : u)));
-  }, []);
-  const suspendUser = useCallback((id) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, status: 'suspended' } : u))
-    );
-  }, []);
-  const deleteUser = useCallback((id) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-  }, []);
-  const setUserNote = useCallback((id, note) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, note } : u)));
-  }, []);
+  const userAction = useCallback(
+    async (body) => {
+      const { ok } = await api('/admin/users', {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      });
+      if (ok) await refreshUsers();
+      return ok;
+    },
+    [refreshUsers]
+  );
+  const approveUser = useCallback(
+    (id, tier) => userAction({ id, action: 'approve', tier }),
+    [userAction]
+  );
+  const rejectUser = useCallback((id) => userAction({ id, action: 'reject' }), [userAction]);
+  const setUserTier = useCallback(
+    (id, tier) => userAction({ id, action: 'setTier', tier }),
+    [userAction]
+  );
+  const suspendUser = useCallback((id) => userAction({ id, action: 'suspend' }), [userAction]);
+  const setUserNote = useCallback(
+    (id, note) => userAction({ id, action: 'setNote', note }),
+    [userAction]
+  );
+  const deleteUser = useCallback(
+    async (id) => {
+      const { ok } = await api('/admin/users', {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
+      });
+      if (ok) await refreshUsers();
+      return ok;
+    },
+    [refreshUsers]
+  );
 
-  // ---- FİYAT (doğrudan üründen, seviyeye göre) ----
+  // ---- FİYAT (seviyeye göre; sunucu admin/onaylı üyeye iki fiyatı da verir) ----
   const getProductPrice = useCallback(
     (product) => {
       if (!isApproved || !priceTier) return null;
@@ -179,22 +163,45 @@ export function AuthProvider({ children }) {
   );
 
   // ---- SİPARİŞLER ----
-  const addOrder = useCallback((order) => {
-    setOrders((prev) => [order, ...prev]);
-  }, []);
+  const addOrder = useCallback(
+    async (order) => {
+      const { ok, data } = await api('/orders', {
+        method: 'POST',
+        body: JSON.stringify(order),
+      });
+      if (ok) await refreshOrders();
+      return ok ? { ok: true } : { ok: false, error: data.error };
+    },
+    [refreshOrders]
+  );
   const getUserOrders = useCallback(
     (userId) => orders.filter((o) => o.userId === userId),
     [orders]
   );
-  const updateOrderStatus = useCallback((code, status) => {
-    setOrders((prev) => prev.map((o) => (o.code === code ? { ...o, status } : o)));
-  }, []);
-  const deleteOrder = useCallback((code) => {
-    setOrders((prev) => prev.filter((o) => o.code !== code));
-  }, []);
+  const updateOrderStatus = useCallback(
+    async (code, status) => {
+      const { ok } = await api('/orders', {
+        method: 'PUT',
+        body: JSON.stringify({ code, status }),
+      });
+      if (ok) await refreshOrders();
+    },
+    [refreshOrders]
+  );
+  const deleteOrder = useCallback(
+    async (code) => {
+      const { ok } = await api('/orders', {
+        method: 'DELETE',
+        body: JSON.stringify({ code }),
+      });
+      if (ok) await refreshOrders();
+    },
+    [refreshOrders]
+  );
 
   const value = {
     user,
+    loading,
     users,
     orders,
     isAdmin,
@@ -203,7 +210,6 @@ export function AuthProvider({ children }) {
     priceTier,
     register,
     login,
-    adminLogin,
     logout,
     approveUser,
     rejectUser,
@@ -216,6 +222,7 @@ export function AuthProvider({ children }) {
     getUserOrders,
     updateOrderStatus,
     deleteOrder,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

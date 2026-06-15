@@ -28,9 +28,13 @@ export default defineConfig([
     languageOptions: { globals: globals.node },
   },
   // Context dosyaları bilinçli olarak hem Provider hem hook export eder;
-  // react-refresh uyarısı bu desende geçerli değil (yalnızca geliştirme HMR ile ilgili)
+  // ayrıca mount/oturum değişiminde API'den veri çekip setState yaparlar
+  // (await sonrası — senkron cascade değil). Bu iki kural bu desende geçersiz.
   {
     files: ['src/context/**/*.jsx'],
-    rules: { 'react-refresh/only-export-components': 'off' },
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])

@@ -1,4 +1,4 @@
-import { sql, getCurrentUser } from '../_lib.js';
+import { sql, getCurrentUser, shapeOrder } from '../_lib.js';
 
 export default async function handler(req, res) {
   try {
@@ -23,7 +23,26 @@ export default async function handler(req, res) {
       const r = user.isAdmin
         ? await sql`select * from orders order by created_at desc`
         : await sql`select * from orders where user_id = ${user.id} order by created_at desc`;
-      return res.json({ orders: r.rows });
+      return res.json({ orders: r.rows.map(shapeOrder) });
+    }
+
+    // DURUM GÜNCELLE — yalnız admin
+    if (req.method === 'PUT') {
+      if (!user.isAdmin) return res.status(403).json({ error: 'Yetkisiz.' });
+      const { code, status } = req.body || {};
+      if (!code || !status)
+        return res.status(400).json({ error: 'Eksik parametre.' });
+      await sql`update orders set status = ${status} where code = ${code}`;
+      return res.json({ ok: true });
+    }
+
+    // SİPARİŞ SİL — yalnız admin
+    if (req.method === 'DELETE') {
+      if (!user.isAdmin) return res.status(403).json({ error: 'Yetkisiz.' });
+      const code = (req.body && req.body.code) || req.query.code;
+      if (!code) return res.status(400).json({ error: 'code gerekli' });
+      await sql`delete from orders where code = ${code}`;
+      return res.json({ ok: true });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
