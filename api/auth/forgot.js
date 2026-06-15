@@ -38,6 +38,8 @@ async function sendResetMail(to, name, link) {
     port,
     secure: port === 465, // 465 → SSL, 587 → STARTTLS
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    // Paylaşımlı hosting mail sunucusu sertifikası için esnek doğrulama
+    tls: { rejectUnauthorized: false },
   });
   await transporter.sendMail({
     from: `"Serev Tedarik" <${process.env.SMTP_USER}>`,
