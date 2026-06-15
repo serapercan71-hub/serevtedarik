@@ -2480,16 +2480,19 @@ button:active:not(:disabled),
 .footer-col p a:hover {
   color: var(--white);
 }
-/* Tasarımcı imzası (sağ alt) */
+/* Tasarımcı imzası (sağ alt) — turuncu→pembe→mor degrade yazı */
 .footer-credit a {
-  color: var(--white);
-  font-weight: 600;
+  font-weight: 800;
   text-decoration: none;
+  background: linear-gradient(90deg, #f2603e 0%, #e0228f 50%, #7b2ff7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
   transition: var(--fast-trans);
 }
 .footer-credit a:hover {
-  color: var(--sky-blue);
-  text-decoration: underline;
+  filter: brightness(1.2);
 }
 
 /* === WHATSAPP === */
