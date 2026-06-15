@@ -11,6 +11,7 @@ import ProductDetail from './pages/ProductDetail.jsx';
 import Checkout from './pages/Checkout.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 import Account from './pages/Account.jsx';
 import Admin from './pages/Admin.jsx';
 import StaticPage from './pages/StaticPage.jsx';
@@ -51,6 +52,7 @@ function App() {
           <Route path="/urun/:id" element={<ProductDetail />} />
           <Route path="/giris" element={<Login />} />
           <Route path="/kayit" element={<Register />} />
+          <Route path="/sifre-sifirla" element={<ResetPassword />} />
           <Route path="/hesabim" element={<Account />} />
           <Route
             path="/odeme"

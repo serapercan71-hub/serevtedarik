@@ -67,6 +67,9 @@ export default function AdminLogin() {
           </button>
         </form>
 
+        <p className="auth-foot" style={{ marginTop: 14 }}>
+          <Link to="/sifre-sifirla">Şifremi unuttum</Link>
+        </p>
         <p className="auth-foot">
           Müşteri misin? <Link to="/giris">Üye girişine git</Link>
         </p>

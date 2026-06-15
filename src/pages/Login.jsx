@@ -64,6 +64,9 @@ export default function Login() {
           </button>
         </form>
 
+        <p className="auth-foot" style={{ marginTop: 14 }}>
+          <Link to="/sifre-sifirla">Şifremi unuttum</Link>
+        </p>
         <p className="auth-foot">
           Hesabın yok mu? <Link to="/kayit">Üyelik başvurusu yap</Link>
         </p>

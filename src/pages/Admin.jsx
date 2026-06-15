@@ -879,49 +879,38 @@ function SettingsAdmin() {
   );
 }
 
-// Yönetici kendi şifresini değiştirir (mevcut şifre doğrulanır).
+// Şifre değiştirme: yöneticinin kayıtlı e-postasına sıfırlama bağlantısı gönderir.
 function PasswordCard() {
-  const { changePassword } = useAuth();
-  const { showToast } = useCart();
-  const [cur, setCur] = useState('');
-  const [pw1, setPw1] = useState('');
-  const [pw2, setPw2] = useState('');
-  const [err, setErr] = useState('');
+  const { user, forgotPassword } = useAuth();
+  const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const submit = async () => {
-    setErr('');
-    if (pw1.length < 4) return setErr('Yeni şifre en az 4 karakter olmalı.');
-    if (pw1 !== pw2) return setErr('Yeni şifreler eşleşmiyor.');
+  const send = async () => {
     setBusy(true);
-    const res = await changePassword(cur, pw1);
+    await forgotPassword(user?.email);
     setBusy(false);
-    if (!res.ok) return setErr(res.error);
-    setCur('');
-    setPw1('');
-    setPw2('');
-    showToast('Şifren güncellendi');
+    setSent(true);
   };
 
   return (
     <div className="account-card" style={{ marginTop: 18 }}>
-      <h3 style={{ marginBottom: 14 }}>Şifre Değiştir</h3>
-      {err && <div className="auth-error">{err}</div>}
-      <div className="form-group">
-        <label>Mevcut Şifre</label>
-        <input type="password" value={cur} onChange={(e) => setCur(e.target.value)} placeholder="••••••••" />
-      </div>
-      <div className="form-group">
-        <label>Yeni Şifre</label>
-        <input type="password" value={pw1} onChange={(e) => setPw1(e.target.value)} placeholder="••••••••" />
-      </div>
-      <div className="form-group">
-        <label>Yeni Şifre (Tekrar)</label>
-        <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="••••••••" />
-      </div>
-      <button className="btn-primary" onClick={submit} disabled={busy}>
-        {busy ? 'Güncelleniyor…' : 'Şifreyi Değiştir'}
-      </button>
+      <h3 style={{ marginBottom: 10 }}>Şifre Değiştir</h3>
+      {sent ? (
+        <p className="auth-sub" style={{ margin: 0 }}>
+          ✅ Şifre sıfırlama bağlantısı <b>{user?.email}</b> adresine gönderildi.
+          E-postandaki bağlantıdan yeni şifreni belirleyebilirsin (1 saat geçerli).
+        </p>
+      ) : (
+        <>
+          <p className="auth-sub" style={{ marginTop: 0 }}>
+            Güvenlik için şifre, kayıtlı e-postana ({user?.email}) gönderilen
+            bağlantı üzerinden değiştirilir.
+          </p>
+          <button className="btn-primary" onClick={send} disabled={busy}>
+            {busy ? 'Gönderiliyor…' : 'Şifre Sıfırlama Bağlantısı Gönder'}
+          </button>
+        </>
+      )}
     </div>
   );
 }

@@ -179,12 +179,6 @@ export default function Header() {
             {cat}
           </Link>
         ))}
-        <Link
-          to="/sayfa/iletisim"
-          className={location.pathname === '/sayfa/iletisim' ? 'active' : undefined}
-        >
-          İletişim
-        </Link>
       </nav>
 
       {/* MOBİL MENÜ */}
@@ -244,7 +238,6 @@ export default function Header() {
                     {cat}
                   </button>
                 ))}
-                <button onClick={() => go('/sayfa/iletisim')}>İletişim</button>
                 <button onClick={() => go('/favorilerim')}>
                   Favorilerim {favCount > 0 ? `(${favCount})` : ''}
                 </button>

@@ -122,6 +122,24 @@ export function AuthProvider({ children }) {
     return ok ? { ok: true } : { ok: false, error: data.error || 'Şifre değiştirilemedi.' };
   }, []);
 
+  // ---- ŞİFREMİ UNUTTUM: e-postaya sıfırlama bağlantısı gönder ----
+  const forgotPassword = useCallback(async (email) => {
+    const { ok, data } = await api('/auth/forgot', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+    return ok ? { ok: true } : { ok: false, error: data.error || 'İşlem başarısız.' };
+  }, []);
+
+  // ---- BAĞLANTIDAKİ TOKEN İLE YENİ ŞİFRE BELİRLE ----
+  const resetPassword = useCallback(async (token, newPassword) => {
+    const { ok, data } = await api('/auth/reset', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    });
+    return ok ? { ok: true } : { ok: false, error: data.error || 'Şifre sıfırlanamadı.' };
+  }, []);
+
   // ---- ADMIN: ÜYE İŞLEMLERİ ----
   const userAction = useCallback(
     async (body) => {
@@ -221,6 +239,8 @@ export function AuthProvider({ children }) {
     login,
     logout,
     changePassword,
+    forgotPassword,
+    resetPassword,
     approveUser,
     rejectUser,
     setUserTier,

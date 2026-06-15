@@ -7,7 +7,7 @@ import CookieConsent from './CookieConsent.jsx';
 import Toast from './Toast.jsx';
 
 // Kendi özel başlığını kullanan (standart Header/Footer almayan) sayfalar.
-const BARE_ROUTES = ['/giris', '/kayit', '/admin', '/odeme'];
+const BARE_ROUTES = ['/giris', '/kayit', '/admin', '/odeme', '/sifre-sifirla'];
 
 // Tüm sayfalarda ortak çerçeve: Header + Footer + WhatsApp + sepet + bildirim.
 // Header/Footer route'a göre koşullanır; böylece her sayfada tek tek
