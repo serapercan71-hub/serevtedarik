@@ -873,6 +873,55 @@ function SettingsAdmin() {
           Ayarları Kaydet
         </button>
       </div>
+
+      <PasswordCard />
+    </div>
+  );
+}
+
+// Yönetici kendi şifresini değiştirir (mevcut şifre doğrulanır).
+function PasswordCard() {
+  const { changePassword } = useAuth();
+  const { showToast } = useCart();
+  const [cur, setCur] = useState('');
+  const [pw1, setPw1] = useState('');
+  const [pw2, setPw2] = useState('');
+  const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    setErr('');
+    if (pw1.length < 4) return setErr('Yeni şifre en az 4 karakter olmalı.');
+    if (pw1 !== pw2) return setErr('Yeni şifreler eşleşmiyor.');
+    setBusy(true);
+    const res = await changePassword(cur, pw1);
+    setBusy(false);
+    if (!res.ok) return setErr(res.error);
+    setCur('');
+    setPw1('');
+    setPw2('');
+    showToast('Şifren güncellendi');
+  };
+
+  return (
+    <div className="account-card" style={{ marginTop: 18 }}>
+      <h3 style={{ marginBottom: 14 }}>Şifre Değiştir</h3>
+      {err && <div className="auth-error">{err}</div>}
+      <div className="form-group">
+        <label>Mevcut Şifre</label>
+        <input type="password" value={cur} onChange={(e) => setCur(e.target.value)} placeholder="••••••••" />
+      </div>
+      <div className="form-group">
+        <label>Yeni Şifre</label>
+        <input type="password" value={pw1} onChange={(e) => setPw1(e.target.value)} placeholder="••••••••" />
+      </div>
+      <div className="form-group">
+        <label>Yeni Şifre (Tekrar)</label>
+        <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="••••••••" />
+      </div>
+      <button className="btn-primary" onClick={submit} disabled={busy}>
+        {busy ? 'Güncelleniyor…' : 'Şifreyi Değiştir'}
+      </button>
     </div>
   );
 }

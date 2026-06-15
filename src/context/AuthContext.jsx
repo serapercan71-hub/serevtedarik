@@ -113,6 +113,15 @@ export function AuthProvider({ children }) {
     setOrders([]);
   }, []);
 
+  // ---- ŞİFRE DEĞİŞTİR (giriş yapmış kullanıcı kendi şifresini) ----
+  const changePassword = useCallback(async (currentPassword, newPassword) => {
+    const { ok, data } = await api('/auth/password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    return ok ? { ok: true } : { ok: false, error: data.error || 'Şifre değiştirilemedi.' };
+  }, []);
+
   // ---- ADMIN: ÜYE İŞLEMLERİ ----
   const userAction = useCallback(
     async (body) => {
@@ -211,6 +220,7 @@ export function AuthProvider({ children }) {
     register,
     login,
     logout,
+    changePassword,
     approveUser,
     rejectUser,
     setUserTier,
