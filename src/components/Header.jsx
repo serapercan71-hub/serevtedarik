@@ -21,7 +21,7 @@ export default function Header() {
   const [sticky, setSticky] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { totalItems, openCart } = useCart();
-  const { user, isAdmin, isMember } = useAuth();
+  const { user, loading, isAdmin, isMember } = useAuth();
   const { count: favCount } = useFavorites();
   const { settings } = useSettings();
   const { categories } = useCatalog();
@@ -29,7 +29,9 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const pending = isMember && user.status === 'pending';
+  const showGuestActions = !loading && !user;
+  const showMemberActions = !loading && isMember;
+  const pending = showMemberActions && user.status === 'pending';
 
   // Aktif menü vurgusu: /urunler'deki ?kategori= ve ?filter= parametrelerine göre.
   const sp = new URLSearchParams(location.search);
@@ -121,7 +123,7 @@ export default function Header() {
             </button>
 
             {/* Hesap durumu */}
-            {!user && (
+            {showGuestActions && (
               <>
                 <Link
                   to="/giris"
@@ -135,7 +137,7 @@ export default function Header() {
                 </Link>
               </>
             )}
-            {isMember && (
+            {showMemberActions && (
               <Link to="/hesabim" className="icon-btn account-icon" title="Hesabım">
                 <IconUser />
                 {pending && <span className="account-dot" title="Onay bekliyor" />}
@@ -244,7 +246,7 @@ export default function Header() {
               </nav>
 
               <div className="mobile-auth">
-                {!user && (
+                {showGuestActions && (
                   <>
                     <button className="checkout-btn" onClick={() => go('/giris')}>
                       Üye Girişi
@@ -254,7 +256,7 @@ export default function Header() {
                     </button>
                   </>
                 )}
-                {isMember && (
+                {showMemberActions && (
                   <button className="checkout-btn" onClick={() => go('/hesabim')}>
                     Hesabım
                   </button>
