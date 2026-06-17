@@ -172,6 +172,14 @@ header.site-header.sticky .logo-img {
   color: var(--teal);
   background: var(--beige);
 }
+.header-icons .auth-loading {
+  pointer-events: none;
+  cursor: default;
+}
+.header-icons .auth-loading:hover {
+  color: var(--navy);
+  background: none;
+}
 /* Sayaç rozeti (favori + sepet) */
 .icon-badge {
   position: absolute;

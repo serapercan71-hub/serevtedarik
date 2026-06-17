@@ -123,6 +123,11 @@ export default function Header() {
             </button>
 
             {/* Hesap durumu */}
+            {loading && (
+              <span className="icon-btn account-icon auth-loading" aria-hidden="true">
+                <IconUser />
+              </span>
+            )}
             {showGuestActions && (
               <>
                 <Link
