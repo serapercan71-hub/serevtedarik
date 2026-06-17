@@ -4167,6 +4167,35 @@ a.price-locked:hover {
     width: 21px;
     height: 21px;
   }
+  .checkout-header {
+    padding: 10px 0 14px;
+  }
+  .checkout-header .header-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 8px;
+  }
+  .checkout-header .logo {
+    order: 2;
+  }
+  .checkout-header .logo-img {
+    height: 46px;
+    max-width: min(280px, 82vw);
+    object-fit: contain;
+  }
+  .back-to-cart {
+    position: static;
+    order: 1;
+    justify-self: start;
+    font-size: 13px;
+    line-height: 1.2;
+    padding: 2px 0;
+    max-width: 100%;
+  }
+  .back-to-cart:hover {
+    transform: none;
+  }
 
   /* Vitrin (hero) — telefonda dengeli tipografi */
   .hero {
