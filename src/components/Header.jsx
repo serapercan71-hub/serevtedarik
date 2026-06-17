@@ -99,7 +99,7 @@ export default function Header() {
 
           <div className="header-icons">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/serevtedarik/"
               target="_blank"
               rel="noreferrer"
               title="Instagram"
