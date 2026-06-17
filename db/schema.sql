@@ -26,7 +26,7 @@ create table if not exists products (
   id              int auto_increment primary key,
   title           varchar(255) not null,
   description     text,
-  image_url       text,
+  image_url       mediumtext,                        -- base64 görsel için (64KB text sınırını aşar)
   category        varchar(128),
   badge           varchar(64),
   price_perakende decimal(10,2) default 0,

@@ -28,7 +28,7 @@ export const STATIC_PAGES = {
       { h: 'Firma Ünvanı', p: '〔Resmi firma ünvanı〕' },
       { h: 'Adres', p: '〔Açık adres, ilçe / il〕' },
       { h: 'Telefon / WhatsApp', p: '0544 864 18 10' },
-      { h: 'E-Posta', p: '〔info@firmaadi.com〕' },
+      { h: 'E-Posta', p: 'info@serevtedarik.com' },
       { h: 'Vergi Dairesi / No', p: '〔Vergi dairesi ve numarası〕' },
       { h: 'Çalışma Saatleri', p: 'Hafta içi 09:00 – 18:00' },
     ],
@@ -69,7 +69,7 @@ export const STATIC_PAGES = {
       },
       {
         h: 'Haklarınız',
-        p: 'KVKK 11. madde kapsamında verilerinize erişme, düzeltme, silinmesini talep etme ve işlemeye itiraz etme haklarına sahipsiniz. Talepleriniz için: 0544 864 18 10 / 〔iletişim e-postası〕',
+        p: 'KVKK 11. madde kapsamında verilerinize erişme, düzeltme, silinmesini talep etme ve işlemeye itiraz etme haklarına sahipsiniz. Talepleriniz için: 0544 864 18 10 / info@serevtedarik.com',
       },
     ],
   },

@@ -1,4 +1,4 @@
-import { sql, getCurrentUser, shapeOrder } from '../_lib.js';
+import { sql, getCurrentUser, shapeOrder, sendMail } from '../_lib.js';
 
 export default async function handler(req, res) {
   try {
@@ -15,6 +15,29 @@ export default async function handler(req, res) {
         values (${o.code}, ${user.id}, ${JSON.stringify(o.items || [])}, ${Number(o.total) || 0},
                 'Onay bekliyor', ${o.customerName || ''}, ${o.phone || ''}, ${o.email || ''},
                 ${o.address || ''}, ${o.note || ''})`;
+
+      // Admin'e yeni sipariş bildirimi (best-effort; SMTP yoksa sessiz)
+      const notify = process.env.NOTIFY_EMAIL || process.env.SMTP_USER;
+      const lines = (o.items || [])
+        .map((i) => `• ${i.title} × ${i.qty}`)
+        .join('<br>');
+      sendMail({
+        to: notify,
+        subject: `Yeni Sipariş Talebi — ${o.code}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;color:#1a2230">
+            <h2>Yeni Sipariş Talebi</h2>
+            <p><b>Kod:</b> ${o.code}</p>
+            <p><b>Müşteri:</b> ${o.customerName || ''} — ${o.phone || ''}</p>
+            <p><b>E-posta:</b> ${o.email || ''}</p>
+            <p><b>Adres:</b> ${o.address || ''}</p>
+            <p><b>Ürünler:</b><br>${lines}</p>
+            <p><b>Toplam:</b> ${Number(o.total) || 0} ₺</p>
+            ${o.note ? `<p><b>Not:</b> ${o.note}</p>` : ''}
+            <p>Yönetici panelinden görüntüleyebilirsin.</p>
+          </div>`,
+      }).catch(() => {});
+
       return res.status(201).json({ ok: true });
     }
 

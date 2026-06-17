@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /odeme
+Disallow: /hesabim
+Disallow: /sifre-sifirla
+
+Sitemap: https://www.serevtedarik.com/sitemap.xml

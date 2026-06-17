@@ -1,6 +1,6 @@
 // Yüklenen herhangi bir formattaki görseli (jpg, png, jfif, gif...) WebP'ye çevirir.
 // Boyutu makul bir genişliğe küçültür ve base64 data URL döndürür (localStorage'a yazılabilir).
-export function fileToWebp(file, { maxWidth = 1000, quality = 0.82 } = {}) {
+export function fileToWebp(file, { maxWidth = 800, quality = 0.72 } = {}) {
   return new Promise((resolve, reject) => {
     if (!file || !file.type.startsWith('image/')) {
       reject(new Error('Geçerli bir görsel dosyası seçin.'));

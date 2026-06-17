@@ -1,6 +1,32 @@
 import mysql from 'mysql2/promise';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import { serialize, parse } from 'cookie';
+
+// Ortak e-posta gönderici. SMTP env'leri yoksa sessizce false döner
+// (bildirimler ana akışı bozmamalı). Best-effort.
+export async function sendMail({ to, subject, html }) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !to) return false;
+  try {
+    const port = Number(process.env.SMTP_PORT) || 465;
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port,
+      secure: port === 465,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      tls: { rejectUnauthorized: false },
+    });
+    await transporter.sendMail({
+      from: `"Serev Tedarik" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 // ============================================================
 //  MySQL bağlantısı (Alastyr cPanel)

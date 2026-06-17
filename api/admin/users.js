@@ -1,4 +1,4 @@
-import { sql, getCurrentUser, publicUser } from '../_lib.js';
+import { sql, getCurrentUser, publicUser, sendMail } from '../_lib.js';
 
 export default async function handler(req, res) {
   try {
@@ -21,6 +21,25 @@ export default async function handler(req, res) {
       if (action === 'approve') {
         const t = tier === 'temsilci' ? 'temsilci' : 'perakende';
         await sql`update users set status = 'approved', tier = ${t} where id = ${id} and is_admin = false`;
+        // Üyeye onay e-postası (best-effort)
+        const r = await sql`select email, full_name from users where id = ${id}`;
+        const m = r.rows[0];
+        if (m?.email) {
+          const base = process.env.SITE_URL || `https://${req.headers.host}`;
+          sendMail({
+            to: m.email,
+            subject: 'Üyeliğiniz Onaylandı — Serev Tedarik',
+            html: `
+              <div style="font-family:Arial,sans-serif;color:#1a2230">
+                <h2>Üyeliğiniz Onaylandı 🎉</h2>
+                <p>Merhaba ${m.full_name || ''},</p>
+                <p>Başvurunuz onaylandı. Artık giriş yaparak özel fiyatlarınızı görebilir ve sipariş oluşturabilirsiniz.</p>
+                <p style="margin:22px 0">
+                  <a href="${base}/giris" style="background:#567c8d;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Giriş Yap</a>
+                </p>
+              </div>`,
+          }).catch(() => {});
+        }
       } else if (action === 'reject') {
         await sql`update users set status = 'rejected', tier = null where id = ${id} and is_admin = false`;
       } else if (action === 'setTier') {
