@@ -4168,30 +4168,38 @@ a.price-locked:hover {
     height: 21px;
   }
   .checkout-header {
-    padding: 10px 0 14px;
+    padding: 14px 0;
   }
   .checkout-header .header-inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    gap: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 58px;
   }
   .checkout-header .logo {
-    order: 2;
+    display: block;
   }
   .checkout-header .logo-img {
-    height: 46px;
+    height: 50px;
     max-width: min(280px, 82vw);
     object-fit: contain;
   }
   .back-to-cart {
-    position: static;
-    order: 1;
-    justify-self: start;
-    font-size: 13px;
-    line-height: 1.2;
-    padding: 2px 0;
-    max-width: 100%;
+    position: absolute;
+    left: 16px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(86, 124, 141, 0.18);
+    border-radius: 12px;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 6px 18px rgba(47, 65, 86, 0.08);
+    font-size: 0;
+  }
+  .back-to-cart span {
+    font-size: 22px;
+    line-height: 1;
   }
   .back-to-cart:hover {
     transform: none;
