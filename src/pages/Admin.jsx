@@ -652,10 +652,28 @@ function MembersAdmin({ initialFilter = 'all', title = 'Tüm Üyeler' }) {
   } = useAuth();
   const { showToast } = useCart();
   const [filter, setFilter] = useState(initialFilter);
+  const [search, setSearch] = useState('');
 
   const order = { pending: 0, approved: 1, suspended: 2, rejected: 3 };
+  const query = search.trim().toLocaleLowerCase('tr');
   const list = [...users]
     .filter((u) => (filter === 'all' ? true : u.status === filter))
+    .filter((u) => {
+      if (!query) return true;
+      return [
+        u.companyName,
+        u.fullName,
+        u.phone,
+        u.email,
+        u.requestedType,
+        u.tier,
+        u.note,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase('tr')
+        .includes(query);
+    })
     .sort(
       (a, b) =>
         (order[a.status] ?? 9) - (order[b.status] ?? 9) ||
@@ -668,21 +686,39 @@ function MembersAdmin({ initialFilter = 'all', title = 'Tüm Üyeler' }) {
         <h2 className="admin-h2">
           {title} <span className="count-pill">{list.length}</span>
         </h2>
-        <select
-          className="filter-select"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="all">Tümü</option>
-          <option value="pending">Beklemede</option>
-          <option value="approved">Onaylı</option>
-          <option value="rejected">Reddedilmiş</option>
-          <option value="suspended">Askıda</option>
-        </select>
+        <div className="member-toolbar-actions">
+          <div className="member-search">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Üye ara..."
+              aria-label="Üye ara"
+            />
+            {search && (
+              <button type="button" onClick={() => setSearch('')} title="Aramayı temizle">
+                ×
+              </button>
+            )}
+          </div>
+          <select
+            className="filter-select"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">Tümü</option>
+            <option value="pending">Beklemede</option>
+            <option value="approved">Onaylı</option>
+            <option value="rejected">Reddedilmiş</option>
+            <option value="suspended">Askıda</option>
+          </select>
+        </div>
       </div>
 
       {list.length === 0 ? (
-        <p className="account-empty">Kayıt yok.</p>
+        <p className="account-empty">
+          {query ? 'Aramaya uygun üye bulunamadı.' : 'Kayıt yok.'}
+        </p>
       ) : (
         <div className="admin-cards">
           {list.map((u) => (

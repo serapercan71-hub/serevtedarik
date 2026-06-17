@@ -502,6 +502,54 @@ header.site-header.sticky .logo-img {
   font-weight: 600;
   cursor: pointer;
 }
+.member-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.member-search {
+  position: relative;
+  min-width: 260px;
+  flex: 1 1 260px;
+}
+.member-search input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--sky-blue);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--navy-dark);
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  padding: 0 42px 0 15px;
+  transition: var(--fast-trans);
+}
+.member-search input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px rgba(86, 124, 141, 0.1);
+}
+.member-search button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--beige);
+  color: var(--teal);
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--fast-trans);
+}
+.member-search button:hover {
+  color: var(--navy-dark);
+  background: var(--sky-blue);
+}
 
 /* Dashboard */
 .dash-cards {
@@ -4136,6 +4184,19 @@ a.price-locked:hover {
     min-width: 18px;
     height: 18px;
     font-size: 10px;
+  }
+  .member-toolbar-actions,
+  .member-search,
+  .member-toolbar-actions .filter-select {
+    width: 100%;
+  }
+  .member-search {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+  .member-search input,
+  .member-toolbar-actions .filter-select {
+    min-height: 46px;
   }
 
   /* Üst şerit ve başlık — daha derli toplu */
