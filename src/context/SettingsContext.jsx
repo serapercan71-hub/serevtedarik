@@ -1,14 +1,15 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { SELLER_WHATSAPP, STORE_NAME, ADMIN } from '../data/store.js';
+import { SELLER_WHATSAPP, STORE_NAME } from '../data/store.js';
 
 const SettingsContext = createContext(null);
-const KEY = 'serapercan_settings';
+// v2: contactEmail varsayılanı değişti → eski önbelleği yok say (info@ görünsün)
+const KEY = 'serev_settings_v2';
 
 const defaults = {
   whatsapp: SELLER_WHATSAPP,
   storeName: STORE_NAME,
   topBar: 'Toptan & perakende tedarik · Üye girişi yaparak özel fiyatlarınızı görün',
-  contactEmail: ADMIN.email,
+  contactEmail: 'info@serevtedarik.com',
 };
 
 function load() {
