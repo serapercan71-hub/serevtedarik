@@ -14,6 +14,16 @@ export default function Footer() {
             <a href="tel:+905448641810">0544 864 18 10</a>
           </p>
           <p>E-Posta: {settings.contactEmail}</p>
+          <p>
+            Instagram:{' '}
+            <a
+              href="https://www.instagram.com/serevtedarik/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              @serevtedarik
+            </a>
+          </p>
           <p>Çalışma Saatleri: 09:00 - 18:00</p>
         </div>
         <div className="footer-col">
