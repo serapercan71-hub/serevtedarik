@@ -5,7 +5,6 @@ import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 import { useSettings } from '../context/SettingsContext.jsx';
-import { useCatalog } from '../context/CatalogContext.jsx';
 import {
   IconInstagram,
   IconHeart,
@@ -17,6 +16,15 @@ import {
   IconSearch,
 } from './icons.jsx';
 
+// Menüdeki SABİT kategoriler. Yeni kategori eklendiğinde menüye OTOMATİK
+// gelmez (sadece Ürünler sayfasında görünür). Burayı elle düzenleyerek değiştir.
+const NAV_CATEGORIES = [
+  'BANYO GEREÇLERİ',
+  'BEZ ÇEŞİTLERİ',
+  'EV GEREÇLERİ',
+  'MUTFAK GEREÇLERİ',
+];
+
 export default function Header() {
   const [sticky, setSticky] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,7 +32,6 @@ export default function Header() {
   const { user, loading, isAdmin, isMember } = useAuth();
   const { count: favCount } = useFavorites();
   const { settings } = useSettings();
-  const { categories } = useCatalog();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,6 +47,8 @@ export default function Header() {
   const onProducts = location.pathname === '/urunler';
   const filterClass = (f) =>
     onProducts && activeFilter === f ? 'active' : undefined;
+  const catClass = (cat) =>
+    onProducts && activeCat === cat ? 'active' : undefined;
 
   useEffect(() => {
     const onScroll = () => setSticky(window.scrollY > 30);
@@ -175,8 +184,15 @@ export default function Header() {
         <Link to="/urunler?filter=cok-satan" className={filterClass('cok-satan')}>
           Çok Satanlar
         </Link>
-        {/* Kategoriler üst menüde gösterilmez (kalabalık olmasın);
-            Ürünler sayfasındaki filtre çiplerinden ve mobil menüden erişilir. */}
+        {NAV_CATEGORIES.map((cat) => (
+          <Link
+            key={cat}
+            to={`/urunler?kategori=${encodeURIComponent(cat)}`}
+            className={catClass(cat)}
+          >
+            {cat}
+          </Link>
+        ))}
       </nav>
 
       {/* MOBİL MENÜ */}
@@ -228,7 +244,7 @@ export default function Header() {
                 <button onClick={() => go('/urunler?filter=cok-satan')}>
                   Çok Satanlar
                 </button>
-                {categories.map((cat) => (
+                {NAV_CATEGORIES.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => go(`/urunler?kategori=${encodeURIComponent(cat)}`)}

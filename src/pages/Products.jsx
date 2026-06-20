@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard.jsx';
@@ -13,13 +13,21 @@ const sortOptions = [
 
 export default function Products() {
   const { products, categories } = useCatalog();
-  // Kataloğun kategorileri + "Tümü"
-  const allCategories = ['Tümü', ...categories];
   const [params, setParams] = useSearchParams();
   const query = params.get('q') || '';
   const category = params.get('kategori') || 'Tümü';
   const sort = params.get('sirala') || 'default';
   const filter = params.get('filter') || ''; // kampanya | cok-satan
+
+  // Kategori arama (çok kategori olunca filtrelemek için)
+  const [catSearch, setCatSearch] = useState('');
+  const shownCategories = useMemo(() => {
+    const q = catSearch.trim().toLocaleLowerCase('tr');
+    const list = q
+      ? categories.filter((c) => c.toLocaleLowerCase('tr').includes(q))
+      : categories;
+    return ['Tümü', ...list];
+  }, [categories, catSearch]);
 
   // Tek bir parametreyi güncelle, diğerlerini koru
   const setParam = (key, value) => {
@@ -102,16 +110,35 @@ export default function Products() {
 
         {/* Filtre çubuğu */}
         <div className="catalog-toolbar">
-          <div className="filter-chips">
-            {allCategories.map((cat) => (
-              <button
-                key={cat}
-                className={`chip${category === cat ? ' active' : ''}`}
-                onClick={() => setParam('kategori', cat)}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="filter-col">
+            {/* Kategori arama — çok kategori olunca hızlı bulmak için */}
+            <div className="cat-search">
+              <input
+                type="text"
+                placeholder="Kategori ara..."
+                value={catSearch}
+                onChange={(e) => setCatSearch(e.target.value)}
+              />
+              {catSearch && (
+                <button className="cat-search-clear" onClick={() => setCatSearch('')}>
+                  ×
+                </button>
+              )}
+            </div>
+            <div className="filter-chips">
+              {shownCategories.map((cat) => (
+                <button
+                  key={cat}
+                  className={`chip${category === cat ? ' active' : ''}`}
+                  onClick={() => setParam('kategori', cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+              {shownCategories.length === 1 && (
+                <span className="cat-no-match">Eşleşen kategori yok</span>
+              )}
+            </div>
           </div>
 
           <div className="sort-box">
