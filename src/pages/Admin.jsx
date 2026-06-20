@@ -22,6 +22,7 @@ const TABS = [
 
 const ORDER_STATUSES = [
   'Onay bekliyor',
+  'Ödemesi alınmadı',
   'Hazırlanıyor',
   'Kargolandı',
   'Tamamlandı',
