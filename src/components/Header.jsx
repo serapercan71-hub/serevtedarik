@@ -38,8 +38,6 @@ export default function Header() {
   const activeCat = sp.get('kategori');
   const activeFilter = sp.get('filter');
   const onProducts = location.pathname === '/urunler';
-  const catClass = (cat) =>
-    onProducts && activeCat === cat ? 'active' : undefined;
   const filterClass = (f) =>
     onProducts && activeFilter === f ? 'active' : undefined;
 
@@ -177,15 +175,8 @@ export default function Header() {
         <Link to="/urunler?filter=cok-satan" className={filterClass('cok-satan')}>
           Çok Satanlar
         </Link>
-        {categories.map((cat) => (
-          <Link
-            key={cat}
-            to={`/urunler?kategori=${encodeURIComponent(cat)}`}
-            className={catClass(cat)}
-          >
-            {cat}
-          </Link>
-        ))}
+        {/* Kategoriler üst menüde gösterilmez (kalabalık olmasın);
+            Ürünler sayfasındaki filtre çiplerinden ve mobil menüden erişilir. */}
       </nav>
 
       {/* MOBİL MENÜ */}
