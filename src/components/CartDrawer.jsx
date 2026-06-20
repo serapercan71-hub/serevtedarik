@@ -107,6 +107,12 @@ export default function CartDrawer() {
                   {formatPrice(totalAmount)}
                 </span>
               </div>
+              {items.length > 0 && (
+                <p className="cart-cargo-note">
+                  📦 <strong>Kargo ücreti alıcıya aittir;</strong> gönderiler{' '}
+                  <strong>karşı (alıcı) ödemeli</strong> yapılır.
+                </p>
+              )}
               <button
                 className="cart-checkout-btn"
                 onClick={goCheckout}
