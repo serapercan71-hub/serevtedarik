@@ -133,6 +133,11 @@ export default function ProductDetail() {
               </div>
             ) : product.inStock ? (
               <>
+                {product.stockStatus === 'low' && (
+                  <div className="stock-note low" style={{ marginBottom: 14 }}>
+                    ⚠️ Stok azaldı — sınırlı sayıda
+                  </div>
+                )}
                 <div className="detail-actions">
                   <div className="qty-selector">
                     <button onClick={() => setQty((q) => Math.max(1, q - 1))}>

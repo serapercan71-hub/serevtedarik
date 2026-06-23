@@ -32,6 +32,7 @@ create table if not exists products (
   price_perakende decimal(10,2) default 0,
   price_temsilci  decimal(10,2) default 0,
   in_stock        boolean default true,
+  stock_status    varchar(16) default 'in',           -- in | low | out (stokta | azaldı | yok)
   rating          decimal(3,2) default 0,
   review_count    int default 0,
   created_at      timestamp default current_timestamp

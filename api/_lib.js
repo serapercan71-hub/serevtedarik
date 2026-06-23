@@ -156,6 +156,9 @@ export function publicUser(u) {
 // Admin ve onaylı üye: perakende (price) + temsilci fiyatını görür; gösterim
 // kullanıcının seviyesine göre frontend'de seçilir. Misafir/onaysız: fiyat YOK.
 export function shapeProduct(p, viewer) {
+  // Stok durumu: in (stokta) | low (azaldı) | out (yok).
+  // Sütun yoksa (eski tablo) in_stock'tan türet.
+  const stockStatus = p.stock_status || (p.in_stock ? 'in' : 'out');
   const base = {
     id: p.id,
     title: p.title,
@@ -163,7 +166,8 @@ export function shapeProduct(p, viewer) {
     img: p.image_url,
     category: p.category,
     badge: p.badge,
-    inStock: !!p.in_stock, // MySQL 0/1 → boolean
+    stockStatus,
+    inStock: stockStatus !== 'out',
     rating: Number(p.rating),
     reviewCount: p.review_count,
   };

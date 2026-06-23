@@ -81,6 +81,7 @@ export function CatalogProvider({ children }) {
           pricePerakende: data.price,
           priceTemsilci: data.priceTemsilci,
           inStock: data.inStock,
+          stockStatus: data.stockStatus,
           rating: data.rating,
           reviewCount: data.reviewCount,
         }),
@@ -105,6 +106,7 @@ export function CatalogProvider({ children }) {
           pricePerakende: data.price,
           priceTemsilci: data.priceTemsilci,
           inStock: data.inStock,
+          stockStatus: data.stockStatus,
         }),
       });
       if (ok) await refresh();

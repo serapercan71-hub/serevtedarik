@@ -205,6 +205,12 @@ const BADGE_OPTIONS = [
   { value: 'Tükendi', label: 'Tükendi', tone: 'sold' },
 ];
 
+const STOCK_OPTIONS = [
+  { value: 'in', label: 'Stokta', tone: 'in' },
+  { value: 'low', label: 'Stok azaldı', tone: 'low' },
+  { value: 'out', label: 'Stokta yok', tone: 'out' },
+];
+
 const emptyProduct = {
   title: '',
   desc: '',
@@ -213,6 +219,7 @@ const emptyProduct = {
   badge: '',
   price: '',
   priceTemsilci: '',
+  stockStatus: 'in',
   inStock: true,
 };
 
@@ -257,8 +264,12 @@ function ProductsAdmin() {
                 <span>Perakende: {formatPrice(Number(p.price) || 0)}</span>
                 <span>Temsilci: {formatPrice(Number(p.priceTemsilci) || 0)}</span>
               </div>
-              <span className={`apr-stock${p.inStock ? '' : ' out'}`}>
-                {p.inStock ? 'Stokta' : 'Tükendi'}
+              <span className={`apr-stock ${p.stockStatus || (p.inStock ? 'in' : 'out')}`}>
+                {p.stockStatus === 'low'
+                  ? 'Stok azaldı'
+                  : p.stockStatus === 'out' || !p.inStock
+                  ? 'Stokta yok'
+                  : 'Stokta'}
               </span>
               <div className="apr-actions">
                 <button className="mini-btn" onClick={() => setEditing(p)}>
@@ -441,14 +452,23 @@ function ProductForm({ initial, categories, onClose, onSave, onOpenCat }) {
                 ))}
               </div>
             </div>
-            <label className="stock-toggle">
-              <input
-                type="checkbox"
-                checked={form.inStock}
-                onChange={(e) => set('inStock', e.target.checked)}
-              />
-              Stokta var
-            </label>
+            <div className="form-group">
+              <label>Stok Durumu</label>
+              <div className="stock-picker">
+                {STOCK_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`stock-chip ${opt.tone} ${
+                      (form.stockStatus || 'in') === opt.value ? 'active' : ''
+                    }`}
+                    onClick={() => set('stockStatus', opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

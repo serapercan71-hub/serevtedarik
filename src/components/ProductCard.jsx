@@ -71,13 +71,16 @@ export default function ProductCard({ product }) {
       <div className="product-price-row">
         <Price product={product} variant="card" />
       </div>
+      {product.stockStatus === 'low' && product.inStock && (
+        <div className="stock-note low">⚠️ Stok azaldı</div>
+      )}
       <button
         className={`add-to-cart${added ? ' added' : ''}`}
         onClick={handleAdd}
         disabled={!product.inStock || (isMember && !isApproved)}
       >
         {!product.inStock
-          ? 'Tükendi'
+          ? 'Stokta Yok'
           : isApproved
           ? added
             ? 'Eklendi ✓'

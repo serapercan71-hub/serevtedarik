@@ -15,11 +15,16 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       const p = req.body || {};
+      const ss = ['in', 'low', 'out'].includes(p.stockStatus)
+        ? p.stockStatus
+        : p.inStock !== false
+        ? 'in'
+        : 'out';
       const r = await sql`
-        insert into products (title, description, image_url, category, badge, price_perakende, price_temsilci, in_stock, rating, review_count)
+        insert into products (title, description, image_url, category, badge, price_perakende, price_temsilci, in_stock, stock_status, rating, review_count)
         values (${p.title}, ${p.desc || ''}, ${p.img || ''}, ${p.category || ''}, ${p.badge || ''},
                 ${Number(p.pricePerakende) || 0}, ${Number(p.priceTemsilci) || 0},
-                ${p.inStock !== false}, ${Number(p.rating) || 0}, ${Number(p.reviewCount) || 0})
+                ${ss !== 'out'}, ${ss}, ${Number(p.rating) || 0}, ${Number(p.reviewCount) || 0})
         returning id`;
       return res.status(201).json({ ok: true, id: r.rows[0].id });
     }
@@ -27,6 +32,11 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
       const p = req.body || {};
       if (!p.id) return res.status(400).json({ error: 'id gerekli' });
+      const ss = ['in', 'low', 'out'].includes(p.stockStatus)
+        ? p.stockStatus
+        : p.inStock !== false
+        ? 'in'
+        : 'out';
       await sql`
         update products set
           title = ${p.title},
@@ -36,7 +46,8 @@ export default async function handler(req, res) {
           badge = ${p.badge || ''},
           price_perakende = ${Number(p.pricePerakende) || 0},
           price_temsilci = ${Number(p.priceTemsilci) || 0},
-          in_stock = ${p.inStock !== false}
+          in_stock = ${ss !== 'out'},
+          stock_status = ${ss}
         where id = ${p.id}`;
       return res.json({ ok: true });
     }
