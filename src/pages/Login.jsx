@@ -7,14 +7,28 @@ import { useAuth } from '../context/AuthContext.jsx';
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [mode, setMode] = useState('phone'); // 'phone' | 'email'
+  const [identifier, setIdentifier] = useState(''); // telefon ya da e-posta
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const switchMode = (m) => {
+    setMode(m);
+    setIdentifier('');
+    setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const res = await login(email, password);
+    setBusy(true);
+    const creds =
+      mode === 'phone'
+        ? { phone: identifier, password }
+        : { email: identifier, password };
+    const res = await login(creds);
+    setBusy(false);
     if (!res.ok) {
       setError(res.error);
       return;
@@ -38,16 +52,36 @@ export default function Login() {
           Fiyatları görmek ve sipariş vermek için giriş yapın.
         </p>
 
+        {/* Giriş yöntemi seçici */}
+        <div className="login-mode-switch">
+          <button
+            type="button"
+            className={mode === 'phone' ? 'active' : ''}
+            onClick={() => switchMode('phone')}
+          >
+            📱 Telefon ile
+          </button>
+          <button
+            type="button"
+            className={mode === 'email' ? 'active' : ''}
+            onClick={() => switchMode('email')}
+          >
+            ✉️ E-posta ile
+          </button>
+        </div>
+
         {error && <div className="auth-error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
-            <label>E-Posta</label>
+            <label>{mode === 'phone' ? 'Telefon' : 'E-Posta'}</label>
             <input
-              type="email"
-              placeholder="ornek@mail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type={mode === 'phone' ? 'tel' : 'email'}
+              inputMode={mode === 'phone' ? 'numeric' : 'email'}
+              placeholder={mode === 'phone' ? '05XX XXX XX XX' : 'ornek@mail.com'}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              autoComplete={mode === 'phone' ? 'tel' : 'email'}
             />
           </div>
           <div className="form-group" style={{ marginBottom: 22 }}>
@@ -57,10 +91,11 @@ export default function Login() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
           </div>
-          <button type="submit" className="checkout-btn">
-            Giriş Yap
+          <button type="submit" className="checkout-btn" disabled={busy}>
+            {busy ? 'Giriş yapılıyor…' : 'Giriş Yap'}
           </button>
         </form>
 

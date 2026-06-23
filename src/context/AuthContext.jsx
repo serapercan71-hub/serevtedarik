@@ -90,11 +90,11 @@ export function AuthProvider({ children }) {
     return ok ? { ok: true } : { ok: false, error: data.error || 'Kayıt başarısız.' };
   }, []);
 
-  // ---- ÜYE GİRİŞİ ----
-  const login = useCallback(async (email, password) => {
+  // ---- ÜYE GİRİŞİ ---- (creds: { email | phone, password })
+  const login = useCallback(async (creds) => {
     const { ok, data } = await api('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(creds),
     });
     if (!ok) return { ok: false, error: data.error || 'Giriş başarısız.' };
     setUser(data.user);

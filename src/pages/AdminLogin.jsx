@@ -14,7 +14,7 @@ export default function AdminLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const res = await login(email, password);
+    const res = await login({ email, password });
     if (!res.ok) {
       setError(res.error);
       return;

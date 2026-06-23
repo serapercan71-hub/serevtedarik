@@ -3697,6 +3697,35 @@ a.price-locked:hover {
   margin-bottom: 26px;
   line-height: 1.6;
 }
+/* Giriş yöntemi seçici (telefon / e-posta) */
+.login-mode-switch {
+  display: flex;
+  gap: 8px;
+  background: var(--beige);
+  padding: 5px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.login-mode-switch button {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  transition: var(--fast-trans);
+}
+.login-mode-switch button:hover {
+  color: var(--teal);
+}
+.login-mode-switch button.active {
+  background: var(--white);
+  color: var(--navy-dark);
+  box-shadow: 0 2px 8px rgba(47, 65, 86, 0.1);
+}
 .auth-error {
   background: #fdf0ef;
   border: 1px solid #f5c6c2;
