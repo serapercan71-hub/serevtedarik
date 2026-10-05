@@ -18,14 +18,6 @@ const initialForm = {
   note: '',
 };
 
-const cityNames = {
-  34: 'İstanbul',
-  '06': 'Ankara',
-  35: 'İzmir',
-  16: 'Bursa',
-  '01': 'Adana',
-};
-
 export default function Checkout() {
   const { items, totalAmount, clearCart, showToast } = useCart();
   const { user, addOrder } = useAuth();
@@ -47,7 +39,7 @@ export default function Checkout() {
     if (!form.firstName.trim()) er.firstName = 'Adınızı girin';
     if (!form.lastName.trim()) er.lastName = 'Soyadınızı girin';
     if (!form.address.trim()) er.address = 'Adres girin';
-    if (!form.city) er.city = 'İl seçin';
+    if (!form.city.trim()) er.city = 'İl girin';
     if (!form.district.trim()) er.district = 'İlçe girin';
     setErrors(er);
     return Object.keys(er).length === 0;
@@ -71,9 +63,7 @@ export default function Checkout() {
     lines.push(`Telefon: ${form.phone}`);
     lines.push(`E-posta: ${form.email}`);
     lines.push(
-      `Adres: ${form.address}, ${form.district} / ${
-        cityNames[form.city] || form.city
-      }`
+      `Adres: ${form.address}, ${form.district} / ${form.city}`
     );
     if (form.note.trim()) lines.push(`Not: ${form.note}`);
     lines.push('');
@@ -115,9 +105,7 @@ export default function Checkout() {
         customerName: `${form.firstName} ${form.lastName}`,
         phone: form.phone,
         email: form.email,
-        address: `${form.address}, ${form.district} / ${
-          cityNames[form.city] || form.city
-        }`,
+        address: `${form.address}, ${form.district} / ${form.city}`,
         note: form.note,
         createdAt: new Date().toISOString(),
       });
@@ -269,18 +257,13 @@ export default function Checkout() {
             full
           />
           <div className="form-row">
-            <div className={`form-group${errors.city ? ' field-error' : ''}`}>
-              <label>İl</label>
-              <select value={form.city} onChange={update('city')}>
-                <option value="">İl Seçiniz</option>
-                <option value="34">İstanbul</option>
-                <option value="06">Ankara</option>
-                <option value="35">İzmir</option>
-                <option value="16">Bursa</option>
-                <option value="01">Adana</option>
-              </select>
-              {errors.city && <div className="error-text">{errors.city}</div>}
-            </div>
+            <Field
+              label="İl"
+              placeholder="Örn. İstanbul"
+              value={form.city}
+              onChange={update('city')}
+              error={errors.city}
+            />
             <Field
               label="İlçe"
               placeholder="İlçe giriniz"
