@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { sql, getCurrentUser, publicUser, sendMail } from '../_lib.js';
 
 export default async function handler(req, res) {
@@ -49,6 +50,12 @@ export default async function handler(req, res) {
         await sql`update users set status = 'suspended' where id = ${id} and is_admin = false`;
       } else if (action === 'setNote') {
         await sql`update users set note = ${req.body.note || ''} where id = ${id} and is_admin = false`;
+      } else if (action === 'setPassword') {
+        const np = String(req.body.newPassword || '');
+        if (np.length < 4)
+          return res.status(400).json({ error: 'Şifre en az 4 karakter olmalı.' });
+        const hash = await bcrypt.hash(np, 10);
+        await sql`update users set password_hash = ${hash} where id = ${id} and is_admin = false`;
       } else {
         return res.status(400).json({ error: 'Geçersiz işlem.' });
       }

@@ -669,6 +669,7 @@ function MembersAdmin({ initialFilter = 'all', title = 'Tüm Üyeler' }) {
     suspendUser,
     deleteUser,
     setUserNote,
+    setUserPassword,
     getUserOrders,
   } = useAuth();
   const { showToast } = useCart();
@@ -770,6 +771,11 @@ function MembersAdmin({ initialFilter = 'all', title = 'Tüm Üyeler' }) {
                 }
               }}
               onNote={(note) => setUserNote(u.id, note)}
+              onSetPassword={async (pw) => {
+                const res = await setUserPassword(u.id, pw);
+                showToast(res.ok ? 'Şifre güncellendi' : res.error);
+                return res.ok;
+              }}
             />
           ))}
         </div>
@@ -778,10 +784,24 @@ function MembersAdmin({ initialFilter = 'all', title = 'Tüm Üyeler' }) {
   );
 }
 
-function MemberCard({ u, orders, onApprove, onReject, onTier, onSuspend, onDelete, onNote }) {
+function MemberCard({ u, orders, onApprove, onReject, onTier, onSuspend, onDelete, onNote, onSetPassword }) {
   const [tier, setTier] = useState(u.tier || u.requestedType || 'perakende');
   const [note, setNote] = useState(u.note || '');
   const [showOrders, setShowOrders] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pw, setPw] = useState('');
+  const [pwBusy, setPwBusy] = useState(false);
+
+  const savePw = async () => {
+    if (pw.trim().length < 4) return;
+    setPwBusy(true);
+    const ok = await onSetPassword(pw.trim());
+    setPwBusy(false);
+    if (ok) {
+      setPw('');
+      setPwOpen(false);
+    }
+  };
 
   const statusLabel = {
     pending: 'Beklemede',
@@ -888,6 +908,36 @@ function MemberCard({ u, orders, onApprove, onReject, onTier, onSuspend, onDelet
             onChange={(e) => setNote(e.target.value)}
             onBlur={() => onNote(note)}
           />
+        </div>
+
+        {/* Yönetici: üyeye yeni şifre belirle */}
+        <div className="pw-reset-row">
+          {!pwOpen ? (
+            <button className="text-btn" onClick={() => setPwOpen(true)}>
+              🔑 Şifre Belirle / Sıfırla
+            </button>
+          ) : (
+            <div className="pw-reset-box">
+              <input
+                type="text"
+                value={pw}
+                placeholder="Yeni şifre (en az 4 karakter)"
+                onChange={(e) => setPw(e.target.value)}
+              />
+              <button className="approve-btn" onClick={savePw} disabled={pwBusy}>
+                {pwBusy ? '...' : 'Kaydet'}
+              </button>
+              <button
+                className="text-btn"
+                onClick={() => {
+                  setPwOpen(false);
+                  setPw('');
+                }}
+              >
+                Vazgeç
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

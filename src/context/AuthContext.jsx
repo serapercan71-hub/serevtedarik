@@ -166,6 +166,16 @@ export function AuthProvider({ children }) {
     (id, note) => userAction({ id, action: 'setNote', note }),
     [userAction]
   );
+  const setUserPassword = useCallback(
+    async (id, newPassword) => {
+      const { ok, data } = await api('/admin/users', {
+        method: 'PUT',
+        body: JSON.stringify({ id, action: 'setPassword', newPassword }),
+      });
+      return ok ? { ok: true } : { ok: false, error: data.error || 'Şifre değiştirilemedi.' };
+    },
+    []
+  );
   const deleteUser = useCallback(
     async (id) => {
       const { ok } = await api('/admin/users', {
@@ -247,6 +257,7 @@ export function AuthProvider({ children }) {
     suspendUser,
     deleteUser,
     setUserNote,
+    setUserPassword,
     getProductPrice,
     addOrder,
     getUserOrders,
