@@ -7,27 +7,16 @@ import { useAuth } from '../context/AuthContext.jsx';
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [mode, setMode] = useState('phone'); // 'phone' | 'email'
-  const [identifier, setIdentifier] = useState(''); // telefon ya da e-posta
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-
-  const switchMode = (m) => {
-    setMode(m);
-    setIdentifier('');
-    setError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setBusy(true);
-    const creds =
-      mode === 'phone'
-        ? { phone: identifier, password }
-        : { email: identifier, password };
-    const res = await login(creds);
+    const res = await login({ phone, password });
     setBusy(false);
     if (!res.ok) {
       setError(res.error);
@@ -49,39 +38,22 @@ export default function Login() {
       >
         <h1 className="auth-title">Üye Girişi</h1>
         <p className="auth-sub">
-          Fiyatları görmek ve sipariş vermek için giriş yapın.
+          Fiyatları görmek ve sipariş vermek için telefon numaran ve şifrenle
+          giriş yap.
         </p>
-
-        {/* Giriş yöntemi seçici */}
-        <div className="login-mode-switch">
-          <button
-            type="button"
-            className={mode === 'phone' ? 'active' : ''}
-            onClick={() => switchMode('phone')}
-          >
-            📱 Telefon ile
-          </button>
-          <button
-            type="button"
-            className={mode === 'email' ? 'active' : ''}
-            onClick={() => switchMode('email')}
-          >
-            ✉️ E-posta ile
-          </button>
-        </div>
 
         {error && <div className="auth-error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
-            <label>{mode === 'phone' ? 'Telefon' : 'E-Posta'}</label>
+            <label>Telefon</label>
             <input
-              type={mode === 'phone' ? 'tel' : 'email'}
-              inputMode={mode === 'phone' ? 'numeric' : 'email'}
-              placeholder={mode === 'phone' ? '05XX XXX XX XX' : 'ornek@mail.com'}
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              autoComplete={mode === 'phone' ? 'tel' : 'email'}
+              type="tel"
+              inputMode="numeric"
+              placeholder="05XX XXX XX XX"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              autoComplete="tel"
             />
           </div>
           <div className="form-group" style={{ marginBottom: 22 }}>
@@ -100,7 +72,7 @@ export default function Login() {
         </form>
 
         <p className="auth-foot" style={{ marginTop: 14 }}>
-          <Link to="/sifre-sifirla">Şifremi unuttum</Link>
+          Şifreni mi unuttun? Yöneticiyle iletişime geç.
         </p>
         <p className="auth-foot">
           Hesabın yok mu? <Link to="/kayit">Üyelik başvurusu yap</Link>

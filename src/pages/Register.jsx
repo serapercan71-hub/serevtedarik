@@ -8,7 +8,6 @@ const initial = {
   companyName: '',
   taxNo: '',
   fullName: '',
-  email: '',
   phone: '',
   requestedType: 'perakende',
   password: '',
@@ -30,7 +29,6 @@ export default function Register() {
     const er = {};
     if (!form.companyName.trim()) er.companyName = 'Firma adı gerekli';
     if (!form.fullName.trim()) er.fullName = 'Yetkili adı gerekli';
-    if (!/\S+@\S+\.\S+/.test(form.email)) er.email = 'Geçerli e-posta girin';
     if (form.phone.replace(/\D/g, '').length < 10) er.phone = 'Geçerli telefon girin';
     if (form.password.length < 4) er.password = 'En az 4 karakter';
     if (form.password !== form.password2) er.password2 = 'Şifreler eşleşmiyor';
@@ -43,8 +41,8 @@ export default function Register() {
     if (!validate()) return;
     const res = await register(form);
     if (!res.ok) {
-      const field = /telefon/i.test(res.error) ? 'phone' : 'email';
-      setErrors({ [field]: res.error });
+      if (/telefon/i.test(res.error)) setErrors({ phone: res.error });
+      else setErrors({ _general: res.error });
       return;
     }
     setDone(true);
@@ -86,6 +84,8 @@ export default function Register() {
           görebilirsin.
         </p>
 
+        {errors._general && <div className="auth-error">{errors._general}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <Field label="Firma Adı" value={form.companyName} onChange={update('companyName')} error={errors.companyName} placeholder="Firma / Mağaza adı" />
@@ -95,7 +95,6 @@ export default function Register() {
             <Field label="Yetkili Adı Soyadı" value={form.fullName} onChange={update('fullName')} error={errors.fullName} placeholder="Ad Soyad" />
             <Field label="Telefon" value={form.phone} onChange={update('phone')} error={errors.phone} placeholder="05XX XXX XX XX" />
           </div>
-          <Field label="E-Posta" type="email" value={form.email} onChange={update('email')} error={errors.email} placeholder="ornek@mail.com" full />
 
           <div className="form-group" style={{ marginBottom: 20 }}>
             <label>Üyelik Tipi (talep)</label>

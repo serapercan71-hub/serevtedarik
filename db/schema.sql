@@ -10,7 +10,7 @@ create table if not exists users (
   company_name   varchar(255),
   tax_no         varchar(64),
   full_name      varchar(255) not null,
-  email          varchar(191) unique not null,
+  email          varchar(191) unique,           -- opsiyonel (kayıt telefon ile)
   phone          varchar(32) unique not null,   -- her üye tek telefonla kayıt olur
   password_hash  varchar(255) not null,
   requested_type varchar(32) default 'perakende',   -- üyenin talep ettiği tip

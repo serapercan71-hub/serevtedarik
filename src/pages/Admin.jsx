@@ -825,10 +825,12 @@ function MemberCard({ u, orders, onApprove, onReject, onTier, onSuspend, onDelet
           <span>Telefon</span>
           <strong>{u.phone}</strong>
         </li>
-        <li>
-          <span>E-posta</span>
-          <strong>{u.email}</strong>
-        </li>
+        {u.email && (
+          <li>
+            <span>E-posta</span>
+            <strong>{u.email}</strong>
+          </li>
+        )}
         <li>
           <span>Başvuru</span>
           <strong>{new Date(u.createdAt).toLocaleDateString('tr-TR')}</strong>

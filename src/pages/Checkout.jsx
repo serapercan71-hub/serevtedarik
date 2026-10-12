@@ -33,7 +33,9 @@ export default function Checkout() {
 
   const validate = () => {
     const er = {};
-    if (!/\S+@\S+\.\S+/.test(form.email)) er.email = 'Geçerli bir e-posta girin';
+    // E-posta opsiyonel; sadece doldurulduysa format kontrol edilir
+    if (form.email.trim() && !/\S+@\S+\.\S+/.test(form.email))
+      er.email = 'Geçerli bir e-posta girin';
     if (form.phone.replace(/\D/g, '').length < 10)
       er.phone = 'Geçerli bir telefon girin';
     if (!form.firstName.trim()) er.firstName = 'Adınızı girin';
@@ -210,7 +212,7 @@ export default function Checkout() {
           </h2>
           <div className="form-row">
             <Field
-              label="E-Posta Adresi"
+              label="E-Posta Adresi (opsiyonel)"
               placeholder="ornek@mail.com"
               type="email"
               value={form.email}
