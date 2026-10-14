@@ -9,6 +9,9 @@ const initial = {
   taxNo: '',
   fullName: '',
   phone: '',
+  city: '',
+  district: '',
+  address: '',
   requestedType: 'perakende',
   password: '',
   password2: '',
@@ -30,6 +33,9 @@ export default function Register() {
     if (!form.companyName.trim()) er.companyName = 'Firma adı gerekli';
     if (!form.fullName.trim()) er.fullName = 'Yetkili adı gerekli';
     if (form.phone.replace(/\D/g, '').length < 10) er.phone = 'Geçerli telefon girin';
+    if (!form.city.trim()) er.city = 'İl gerekli';
+    if (!form.district.trim()) er.district = 'İlçe gerekli';
+    if (!form.address.trim()) er.address = 'Adres gerekli';
     if (form.password.length < 4) er.password = 'En az 4 karakter';
     if (form.password !== form.password2) er.password2 = 'Şifreler eşleşmiyor';
     setErrors(er);
@@ -95,6 +101,11 @@ export default function Register() {
             <Field label="Yetkili Adı Soyadı" value={form.fullName} onChange={update('fullName')} error={errors.fullName} placeholder="Ad Soyad" />
             <Field label="Telefon" value={form.phone} onChange={update('phone')} error={errors.phone} placeholder="05XX XXX XX XX" />
           </div>
+          <div className="form-row">
+            <Field label="İl" value={form.city} onChange={update('city')} error={errors.city} placeholder="Örn. İstanbul" />
+            <Field label="İlçe" value={form.district} onChange={update('district')} error={errors.district} placeholder="İlçe" />
+          </div>
+          <Field label="Açık Adres" value={form.address} onChange={update('address')} error={errors.address} placeholder="Mahalle, sokak, bina ve daire no..." full />
 
           <div className="form-group" style={{ marginBottom: 20 }}>
             <label>Üyelik Tipi (talep)</label>

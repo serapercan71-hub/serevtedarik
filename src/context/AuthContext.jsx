@@ -85,6 +85,9 @@ export function AuthProvider({ children }) {
         phone: form.phone,
         password: form.password,
         requestedType: form.requestedType,
+        city: form.city,
+        district: form.district,
+        address: form.address,
       }),
     });
     return ok ? { ok: true } : { ok: false, error: data.error || 'Kayıt başarısız.' };

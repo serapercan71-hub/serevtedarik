@@ -145,6 +145,9 @@ export function publicUser(u) {
     requestedType: u.requested_type,
     status: u.status,
     tier: u.tier,
+    city: u.city || '',
+    district: u.district || '',
+    address: u.address || '',
     note: u.note || '',
     isAdmin: !!u.is_admin, // MySQL 0/1 → boolean
     role: u.is_admin ? 'admin' : 'member',

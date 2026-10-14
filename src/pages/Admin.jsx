@@ -831,6 +831,20 @@ function MemberCard({ u, orders, onApprove, onReject, onTier, onSuspend, onDelet
             <strong>{u.email}</strong>
           </li>
         )}
+        {(u.city || u.district) && (
+          <li>
+            <span>İl / İlçe</span>
+            <strong>
+              {[u.city, u.district].filter(Boolean).join(' / ')}
+            </strong>
+          </li>
+        )}
+        {u.address && (
+          <li className="member-address">
+            <span>Adres</span>
+            <strong>{u.address}</strong>
+          </li>
+        )}
         <li>
           <span>Başvuru</span>
           <strong>{new Date(u.createdAt).toLocaleDateString('tr-TR')}</strong>

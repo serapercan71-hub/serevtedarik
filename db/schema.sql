@@ -16,6 +16,9 @@ create table if not exists users (
   requested_type varchar(32) default 'perakende',   -- üyenin talep ettiği tip
   status         varchar(16) default 'pending',     -- pending | approved | rejected
   tier           varchar(16),                       -- perakende | temsilci (admin atar)
+  city           varchar(100),                      -- il
+  district       varchar(100),                      -- ilçe
+  address        text,                              -- açık adres
   note           text,                              -- yöneticinin üyeye özel notu
   is_admin       boolean default false,
   created_at     timestamp default current_timestamp

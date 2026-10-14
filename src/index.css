@@ -3875,6 +3875,17 @@ a.price-locked:hover {
 .account-info li:last-child {
   border-bottom: none;
 }
+/* Uzun adres: alt alta ve sağa yaslı sarmalı */
+.account-info li.member-address {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.account-info li.member-address strong {
+  text-align: left;
+  font-weight: 600;
+  line-height: 1.4;
+}
 .account-info span {
   color: var(--teal);
 }

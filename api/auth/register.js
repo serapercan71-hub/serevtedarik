@@ -3,11 +3,23 @@ import { sql } from '../_lib.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  const { companyName, taxNo, fullName, email, phone, password, requestedType } =
-    req.body || {};
+  const {
+    companyName,
+    taxNo,
+    fullName,
+    email,
+    phone,
+    password,
+    requestedType,
+    city,
+    district,
+    address,
+  } = req.body || {};
 
   if (!password || !fullName)
     return res.status(400).json({ error: 'Zorunlu alanlar eksik.' });
+  if (!String(city || '').trim() || !String(district || '').trim() || !String(address || '').trim())
+    return res.status(400).json({ error: 'İl, ilçe ve adres zorunludur.' });
 
   // Kayıt yalnızca telefon ile. E-posta opsiyonel (verilmezse NULL).
   const mail = email ? String(email).toLowerCase().trim() : null;
@@ -27,8 +39,9 @@ export default async function handler(req, res) {
 
     const hash = await bcrypt.hash(password, 10);
     await sql`
-      insert into users (company_name, tax_no, full_name, email, phone, password_hash, requested_type, status)
-      values (${companyName || ''}, ${taxNo || ''}, ${fullName}, ${mail}, ${phoneVal}, ${hash}, ${requestedType || 'perakende'}, 'pending')
+      insert into users (company_name, tax_no, full_name, email, phone, password_hash, requested_type, status, city, district, address)
+      values (${companyName || ''}, ${taxNo || ''}, ${fullName}, ${mail}, ${phoneVal}, ${hash}, ${requestedType || 'perakende'}, 'pending',
+              ${String(city).trim()}, ${String(district).trim()}, ${String(address).trim()})
     `;
     return res.status(201).json({ ok: true });
   } catch (e) {
